@@ -1,43 +1,13 @@
-// Importar Firebase SDK desde CDN
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
-  signOut, 
-  onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { 
-  getFirestore, 
-  doc, 
-  setDoc, 
-  getDoc, 
-  collection, 
-  addDoc, 
-  query, 
-  orderBy, 
-  onSnapshot, 
-  serverTimestamp 
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+// Importar Supabase desde CDN
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 // ==========================================
-// CONFIGURACIÓN DE FIREBASE (SAMAZIL WEB)
+// CONFIGURACIÓN DE SUPABASE (CON TUS DATOS)
 // ==========================================
-const firebaseConfig = {
-  apiKey: "AIzaSyBHOzf9seIfLZhN1nfY5kClvYTPdOngMgI",
-  authDomain: "samazil.firebaseapp.com",
-  projectId: "samazil",
-  storageBucket: "samazil.firebasestorage.app",
-  messagingSenderId: "735433209556",
-  appId: "1:735433209556:web:46e18ce0e103adb4f16d41",
-  measurementId: "G-4NBKHC7DSZ"
-};
+const SUPABASE_URL = "https://slzbakhcodhebjltriak.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsemJha2hjb2RoZWJqbHRyaWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMTg5NTAsImV4cCI6MjEwMDU5NDk1MH0.iksEXnM3ni17QtVMGkzfZcN1mmZSP8V5d4wV0YxXvjA";
 
-// Inicialización de servicios
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Nodos del DOM
 const authContainer = document.getElementById("auth-container");
@@ -55,7 +25,7 @@ const chatBox = document.getElementById("chat-box");
 let usuarioActual = null;
 
 // ==========================================
-// 1. SISTEMA DE AUTENTICACIÓN Y REGISTRO
+// 1. SISTEMA DE AUTENTICACIÓN
 // ==========================================
 if (formAuth) {
   formAuth.addEventListener("submit", async (e) => {
@@ -64,42 +34,39 @@ if (formAuth) {
     const email = document.getElementById("auth-email").value.trim();
     const password = document.getElementById("auth-password").value;
 
-    try {
-      // Intentar iniciar sesión
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      // Si el usuario no existe o las credenciales son genéricas de nuevo registro, crear la cuenta
-      if (
-        error.code === 'auth/invalid-credential' || 
-        error.code === 'auth/user-not-found'
-      ) {
-        try {
-          const cred = await createUserWithEmailAndPassword(auth, email, password);
-          await updateProfile(cred.user, { displayName: nombre });
-        } catch (errCrear) {
-          alert("Error al registrarse: " + errCrear.message);
-        }
-      } else {
-        alert("Error de autenticación: " + error.message);
+    // Intentar iniciar sesión
+    let { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    // Si no existe el usuario, lo creamos automáticamente
+    if (error) {
+      const registro = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { display_name: nombre } }
+      });
+
+      if (registro.error) {
+        alert("Error de autenticación: " + registro.error.message);
       }
     }
   });
 }
 
 if (btnLogout) {
-  btnLogout.addEventListener("click", () => signOut(auth));
+  btnLogout.addEventListener("click", () => supabase.auth.signOut());
 }
 
-// Escuchar cambios en el estado de autenticación
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    usuarioActual = user;
+// Escuchar cambios de sesión
+supabase.auth.onAuthStateChange((event, session) => {
+  if (session) {
+    usuarioActual = session.user;
+    const nombre = usuarioActual.user_metadata?.display_name || usuarioActual.email;
+
     if (authContainer) authContainer.style.display = "none";
     if (usuarioInfo) usuarioInfo.style.display = "flex";
-    if (nombreUsuarioHeader) nombreUsuarioHeader.textContent = `Hola, ${user.displayName || user.email}`;
+    if (nombreUsuarioHeader) nombreUsuarioHeader.textContent = `Hola, ${nombre}`;
     if (contenidoPrincipal) contenidoPrincipal.style.display = "block";
 
-    await cargarPerfilUsuario(user.uid);
     escucharMensajes();
   } else {
     usuarioActual = null;
@@ -110,39 +77,25 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 // ==========================================
-// 2. GESTIÓN DEL PERFIL DE USUARIO
+// 2. GESTIÓN DEL PERFIL
 // ==========================================
 if (formPerfil) {
-  formPerfil.addEventListener("submit", async (e) => {
+  formPerfil.addEventListener("submit", (e) => {
     e.preventDefault();
-    if (!usuarioActual) return;
-
-    try {
-      await setDoc(doc(db, "usuarios", usuarioActual.uid), {
-        nombre: usuarioActual.displayName || usuarioActual.email,
-        precioHora: precioHoraInput.value
-      }, { merge: true });
-
-      alert("¡Tarifa guardada con éxito!");
-    } catch (error) {
-      alert("Error al guardar: " + error.message);
+    if (precioHoraInput) {
+      localStorage.setItem("samazil_precio_hora", precioHoraInput.value);
+      alert("¡Tarifa guardada exitosamente!");
     }
   });
 }
 
-async function cargarPerfilUsuario(uid) {
-  try {
-    const userDoc = await getDoc(doc(db, "usuarios", uid));
-    if (userDoc.exists() && userDoc.data().precioHora) {
-      precioHoraInput.value = userDoc.data().precioHora;
-    }
-  } catch (error) {
-    console.error("Error al obtener el perfil:", error);
-  }
+// Cargar tarifa local al iniciar
+if (precioHoraInput && localStorage.getItem("samazil_precio_hora")) {
+  precioHoraInput.value = localStorage.getItem("samazil_precio_hora");
 }
 
 // ==========================================
-// 3. CHAT / MENSAJES EN TIEMPO REAL
+// 3. CHAT EN TIEMPO REAL
 // ==========================================
 if (formMensaje) {
   formMensaje.addEventListener("submit", async (e) => {
@@ -150,48 +103,61 @@ if (formMensaje) {
     const texto = inputMensaje.value.trim();
     if (!texto || !usuarioActual) return;
 
-    try {
-      await addDoc(collection(db, "mensajes"), {
-        texto: texto,
-        usuario: usuarioActual.displayName || usuarioActual.email,
-        uid: usuarioActual.uid,
-        fecha: serverTimestamp()
-      });
+    const nombre = usuarioActual.user_metadata?.display_name || usuarioActual.email;
+
+    const { error } = await supabase.from("mensajes").insert([
+      { texto: texto, usuario: nombre, user_id: usuarioActual.id }
+    ]);
+
+    if (error) {
+      console.error("Error al enviar mensaje:", error.message);
+    } else {
       inputMensaje.value = "";
-    } catch (error) {
-      console.error("Error al enviar mensaje:", error);
     }
   });
 }
 
 function escucharMensajes() {
-  const q = query(collection(db, "mensajes"), orderBy("fecha", "asc"));
-
-  onSnapshot(q, (snapshot) => {
-    if (!chatBox) return;
-    chatBox.innerHTML = "";
-
-    snapshot.forEach((doc) => {
-      const msg = doc.data();
-      const div = document.createElement("div");
-      
-      const esMio = usuarioActual && msg.uid === usuarioActual.uid;
-      
-      // Estilos ajustados al tema de placas GT
-      div.style.alignSelf = esMio ? "flex-end" : "flex-start";
-      div.style.backgroundColor = esMio ? "var(--marigold)" : "var(--ink-3)";
-      div.style.color = esMio ? "var(--charcoal)" : "var(--paper)";
-      div.style.borderBottomRightRadius = esMio ? "3px" : "12px";
-      div.style.borderBottomLeftRadius = esMio ? "12px" : "3px";
-
-      div.innerHTML = `
-        <strong style="font-family: var(--font-data); font-size: 12px; display: block; margin-bottom: 2px;">${msg.usuario}:</strong>
-        <span>${msg.texto}</span>
-      `;
-
-      chatBox.appendChild(div);
+  // Cargar mensajes existentes
+  supabase
+    .from("mensajes")
+    .select("*")
+    .order("created_at", { ascending: true })
+    .then(({ data }) => {
+      if (data) renderizarMensajes(data);
     });
 
-    chatBox.scrollTop = chatBox.scrollHeight;
-  });
+  // Escuchar nuevos mensajes en tiempo real
+  supabase
+    .channel("chat-room")
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "mensajes" }, (payload) => {
+      agregarMensajeAlChat(payload.new);
+    })
+    .subscribe();
+}
+
+function renderizarMensajes(mensajes) {
+  if (!chatBox) return;
+  chatBox.innerHTML = "";
+  mensajes.forEach((msg) => agregarMensajeAlChat(msg));
+}
+
+function agregarMensajeAlChat(msg) {
+  if (!chatBox) return;
+  const div = document.createElement("div");
+  const esMio = usuarioActual && msg.user_id === usuarioActual.id;
+
+  div.style.alignSelf = esMio ? "flex-end" : "flex-start";
+  div.style.backgroundColor = esMio ? "var(--marigold)" : "var(--ink-3)";
+  div.style.color = esMio ? "var(--charcoal)" : "var(--paper)";
+  div.style.borderBottomRightRadius = esMio ? "3px" : "12px";
+  div.style.borderBottomLeftRadius = esMio ? "12px" : "3px";
+
+  div.innerHTML = `
+    <strong style="font-family: var(--font-data); font-size: 12px; display: block; margin-bottom: 2px;">${msg.usuario}:</strong>
+    <span>${msg.texto}</span>
+  `;
+
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
