@@ -3,8 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STAR.PRO GT</title>
-<meta name="description" content="Plataforma guatemalteca que conecta consumidores con emprendedores y profesionales de oficios.">
+<title>Samazil GT</title>
+<meta name="description" content="Plataforma guatemalteca que conecta clientes con profesionales de oficios y servicios.">
+
+<!-- Favicon de Samazil -->
+<link rel="icon" type="image/png" href="https://via.placeholder.com/32/ff6b00/ffffff?text=SZ">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,8 +20,8 @@
 <header class="topbar" id="topbar">
   <div class="topbar-inner">
     <button class="brand" id="btnBrandHome" aria-label="Ir al inicio">
-      <span class="brand-plate">SP</span>
-      <span class="brand-text">STAR.PRO<small>GT</small></span>
+      <span class="brand-plate">SZ</span>
+      <span class="brand-text">SAMAZIL<small>GT</small></span>
     </button>
     <nav class="topbar-nav" id="topbarNav" hidden>
       <button class="nav-link" data-route="dashboard">Inicio</button>
@@ -43,14 +47,14 @@
       <span class="stripe s1"></span><span class="stripe s2"></span><span class="stripe s3"></span><span class="stripe s4"></span><span class="stripe s5"></span>
     </div>
     <div class="hero-content">
-      <p class="eyebrow">Plataforma de oficios y servicios · Guatemala</p>
-      <h1 class="hero-title">Conectate con<br>quien lo hace<br><span class="accent-underline">bien.</span></h1>
-      <p class="hero-sub">Buscá plomeros, electricistas, tutores, músicos, jardineros y más — con tarifas claras desde el primer momento.</p>
+      <p class="eyebrow">Servicios y Oficios · Guatemala</p>
+      <h1 class="hero-title">Encuentra a<br>quien lo hace<br><span class="accent-underline">bien.</span></h1>
+      <p class="hero-sub">Conecta directamente con profesionales. Consulta tarifas fijas por hora y contrata con total transparencia.</p>
       <div class="hero-actions">
         <button class="btn btn--accent btn--lg" data-route="registro" data-tipo="consumidor">Busco un servicio (Cliente)</button>
         <button class="btn btn--outline-light btn--lg" data-route="registro" data-tipo="emprendedor">Ofrezco un servicio (Profesional)</button>
       </div>
-      <p class="hero-foot">¿Ya tenés cuenta? <button class="link-inline" data-route="login">Iniciá sesión</button></p>
+      <p class="hero-foot">¿Ya tienes cuenta? <button class="link-inline" data-route="login">Inicia sesión</button></p>
     </div>
   </section>
 </template>
@@ -58,14 +62,14 @@
 <template id="tpl-registro">
   <section class="auth-shell">
     <div class="auth-card">
-      <h1 class="auth-title">Crear cuenta</h1>
+      <h1 class="auth-title">Crear cuenta en Samazil</h1>
       <div class="seg-toggle" role="tablist" aria-label="Tipo de perfil">
-        <button class="seg-btn active" data-tipo="consumidor" type="button">Consumidor (Cliente)</button>
-        <button class="seg-btn" data-tipo="emprendedor" type="button">Emprendedor / Profesional</button>
+        <button class="seg-btn active" data-tipo="consumidor" type="button">Cliente</button>
+        <button class="seg-btn" data-tipo="emprendedor" type="button">Profesional / Prestador</button>
       </div>
       <p class="auth-help" id="regHelp">Busco profesionales para contratar servicios.</p>
       <form id="formRegistro" novalidate></form>
-      <p class="auth-switch">¿Ya tenés cuenta? <button class="link-inline" data-route="login">Iniciá sesión</button></p>
+      <p class="auth-switch">¿Ya tienes cuenta? <button class="link-inline" data-route="login">Inicia sesión</button></p>
     </div>
   </section>
 </template>
@@ -76,8 +80,8 @@
       <h1 class="auth-title">Iniciar sesión</h1>
       <form id="formLogin" novalidate>
         <label class="field">
-          <span>Número de teléfono</span>
-          <input type="tel" name="telefono" placeholder="Ej. 55554444" autocomplete="tel" required>
+          <span>Correo electrónico</span>
+          <input type="email" name="email" placeholder="correo@ejemplo.com" autocomplete="email" required>
         </label>
         <label class="field">
           <span>Contraseña</span>
@@ -86,14 +90,14 @@
         <p class="form-error" id="loginError" hidden></p>
         <button class="btn btn--accent btn--full" type="submit">Entrar</button>
       </form>
-      <p class="auth-switch">¿Sos nuevo? <button class="link-inline" data-route="registro">Creá tu cuenta</button></p>
+      <p class="auth-switch">¿Eres nuevo? <button class="link-inline" data-route="registro">Crea tu cuenta</button></p>
     </div>
   </section>
 </template>
 
 <template id="tpl-dashboard">
   <section class="dash-head">
-    <p class="eyebrow">Bienvenido de nuevo</p>
+    <p class="eyebrow">Bienvenido a Samazil</p>
     <h1 class="dash-title" id="dashGreeting">—</h1>
     <p class="dash-sub" id="dashSub"></p>
   </section>
@@ -101,17 +105,17 @@
     <button class="dash-card" data-route="catalogo">
       <span class="dash-card-num">01</span>
       <span class="dash-card-title">Buscar Servicios</span>
-      <span class="dash-card-text">Explora profesionales de plomería, electricidad y más</span>
+      <span class="dash-card-text">Consulta la tarifa por hora de cada profesional</span>
     </button>
     <button class="dash-card" data-route="mensajes">
       <span class="dash-card-num">02</span>
       <span class="dash-card-title">Mensajes en Vivo</span>
-      <span class="dash-card-text">Chatea en directo con usuarios y prestadores registrados</span>
+      <span class="dash-card-text">Chatea en directo con clientes y prestadores</span>
     </button>
     <button class="dash-card" data-route="perfil">
       <span class="dash-card-num">03</span>
       <span class="dash-card-title">Mi Perfil</span>
-      <span class="dash-card-text">Gestiona tus datos o sube fotos de tus proyectos</span>
+      <span class="dash-card-text">Sube tu foto de perfil, ajusta tu tarifa por hora u obras</span>
     </button>
   </section>
 </template>
@@ -119,7 +123,7 @@
 <template id="tpl-catalogo">
   <section class="cat-head">
     <h1 class="section-title">Oficios y Servicios</h1>
-    <p class="section-sub">Elegí una categoría para ver profesionales disponibles.</p>
+    <p class="section-sub">Elige una categoría para ver tarifas por hora y profesionales disponibles.</p>
   </section>
   <div class="plaque-grid" id="catalogoPlaques"></div>
 </template>
@@ -131,7 +135,7 @@
 <template id="tpl-mensajes">
   <section class="msg-shell">
     <div style="width: 100%; max-width: 800px; margin: 0 auto; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.1);">
-      <h2 class="section-title section-title--sm" style="margin-bottom: 15px;">Sala de Conversación General</h2>
+      <h2 class="section-title section-title--sm" style="margin-bottom: 15px;">Sala de Conversación</h2>
       <div id="msgThread"></div>
     </div>
   </section>
