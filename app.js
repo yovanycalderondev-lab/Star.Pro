@@ -1,14 +1,18 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-// Configuración de Supabase
+// ==========================================
+// CONFIGURACIÓN DE SUPABASE
+// ==========================================
 const SUPABASE_URL = "https://slzbakhcodhebjltriak.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInRefiI6InNsemJha2hjb2RoZWJqbHRyaWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMTg5NTAsImV4cCI6MjEwMDU5NDk1MH0.iksEXnM3ni17QtVMGkzfZcN1mmZSP8V5d4wV0YxXvjA";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsemJha2hjb2RoZWJqbHRyaWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMTg5NTAsImV4cCI6MjEwMDU5NDk1MH0.iksEXnM3ni17QtVMGkzfZcN1mmZSP8V5d4wV0YxXvjA";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Variables de Estado Global
 let usuarioActual = null;
 let rutaActual = "landing";
 
+// Nodos del DOM
 const mainApp = document.getElementById("app");
 const topbarNav = document.getElementById("topbarNav");
 const topbarGuest = document.getElementById("topbarGuest");
@@ -16,7 +20,7 @@ const btnLogout = document.getElementById("btnLogout");
 const btnBrandHome = document.getElementById("btnBrandHome");
 
 // ==========================================
-// RUTAS Y NAVEGACIÓN
+// 1. SISTEMA DE RUTAS Y NAVEGACIÓN
 // ==========================================
 function navegarA(ruta) {
   rutaActual = ruta;
@@ -26,6 +30,7 @@ function navegarA(ruta) {
   mainApp.innerHTML = "";
   mainApp.appendChild(tpl.content.cloneNode(true));
 
+  // Inicializar lógica específica de cada vista
   if (ruta === "login") initLogin();
   if (ruta === "registro") initRegistro();
   if (ruta === "dashboard") initDashboard();
@@ -39,7 +44,8 @@ function vincularEventosNavegacion() {
   document.querySelectorAll("[data-route]").forEach((btn) => {
     btn.onclick = (e) => {
       e.preventDefault();
-      navegarA(btn.getAttribute("data-route"));
+      const ruta = btn.getAttribute("data-route");
+      navegarA(ruta);
     };
   });
 }
@@ -55,7 +61,7 @@ function actualizarNavegacion(usuario) {
 }
 
 // ==========================================
-// CONTROL DE SESIÓN EN VIVO
+// 2. ESCUCHADOR DE SESIÓN EN TIEMPO REAL
 // ==========================================
 supabase.auth.onAuthStateChange((event, session) => {
   if (session) {
@@ -74,7 +80,7 @@ supabase.auth.onAuthStateChange((event, session) => {
 });
 
 // ==========================================
-// INICIO DE SESIÓN CON CORREO
+// 3. INICIO DE SESIÓN
 // ==========================================
 function initLogin() {
   const form = document.getElementById("formLogin");
@@ -83,20 +89,24 @@ function initLogin() {
 
   form.onsubmit = async (e) => {
     e.preventDefault();
+    if (errorMsg) errorMsg.hidden = true;
+
     const email = form.email.value.trim();
     const password = form.password.value;
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      errorMsg.hidden = false;
-      errorMsg.textContent = "Correo o contraseña incorrectos.";
+      if (errorMsg) {
+        errorMsg.hidden = false;
+        errorMsg.textContent = "Correo o contraseña incorrectos.";
+      }
     }
   };
 }
 
 // ==========================================
-// REGISTRO (CON TARIFAS Y FOTO DE PERFIL)
+// 4. REGISTRO DE USUARIO (CON FOTO Y TARIFA)
 // ==========================================
 function initRegistro() {
   const form = document.getElementById("formRegistro");
@@ -158,9 +168,12 @@ function initRegistro() {
 
     form.onsubmit = async (e) => {
       e.preventDefault();
+      const regError = document.getElementById("regError");
+      if (regError) regError.hidden = true;
+
       const nombre = form.nombre.value.trim();
       const email = form.email.value.trim();
-      const avatarUrl = form.avatar_url.value.trim();
+      const avatarUrl = form.avatar_url ? form.avatar_url.value.trim() : "";
       const password = form.password.value;
       const oficio = form.oficio ? form.oficio.value.trim() : "";
       const tarifaHora = form.tarifa_hora ? form.tarifa_hora.value : "0";
@@ -180,7 +193,6 @@ function initRegistro() {
       });
 
       if (error) {
-        const regError = document.getElementById("regError");
         if (regError) {
           regError.hidden = false;
           regError.textContent = error.message;
@@ -193,7 +205,7 @@ function initRegistro() {
 }
 
 // ==========================================
-// DENTRO DE MI PERFIL
+// 5. VISTA DE PERFIL DE USUARIO
 // ==========================================
 function initPerfil() {
   const profileRoot = document.getElementById("profileRoot");
@@ -207,15 +219,15 @@ function initPerfil() {
       <img src="${meta.avatar_url || 'https://via.placeholder.com/150'}" alt="Foto de perfil" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); margin-bottom: 15px;">
       <h1 class="auth-title">${meta.display_name || "Usuario Samazil"}</h1>
       <p style="color: var(--text-muted);">${usuarioActual.email}</p>
-      <p style="margin-top: 5px;"><strong>Rol:</strong> ${esPro ? "Prestador de Servicios" : "Cliente"}</p>
+      <p style="margin-top: 10px;"><strong>Tipo de cuenta:</strong> ${esPro ? "Prestador de Servicios / Profesional" : "Cliente / Consumidor"}</p>
       ${esPro ? `<p><strong>Especialidad:</strong> ${meta.oficio || "Oficios Varios"}</p>` : ""}
-      ${esPro ? `<p style="font-size: 1.2rem; color: var(--accent); font-weight: bold; margin-top: 10px;">Tarifa: Q${meta.tarifa_hora || 0} / hora</p>` : ""}
+      ${esPro ? `<p style="font-size: 1.3rem; color: var(--accent); font-weight: bold; margin-top: 10px;">Tarifa: Q${meta.tarifa_hora || 0} / hora</p>` : ""}
     </div>
   `;
 }
 
 // ==========================================
-// CHAT CON FOTOGRAFÍA DE PERFIL Y HORAS
+// 6. CHAT EN VIVO CON FOTO DE PERFIL
 // ==========================================
 function initMensajes() {
   const msgThread = document.getElementById("msgThread");
@@ -224,7 +236,7 @@ function initMensajes() {
   msgThread.innerHTML = `
     <div id="chatBox" style="flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; max-height: 400px;"></div>
     <form id="formChat" style="display: flex; gap: 10px; padding: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
-      <input type="text" id="chatInput" placeholder="Escribe un mensaje..." required style="flex: 1;">
+      <input type="text" id="chatInput" placeholder="Escribe tu mensaje..." required style="flex: 1;">
       <button type="submit" class="btn btn--accent">Enviar</button>
     </form>
   `;
@@ -239,11 +251,14 @@ function initMensajes() {
     if (!texto) return;
 
     const meta = usuarioActual.user_metadata || {};
-    const nombre = meta.display_name || "Usuario";
-    const avatar = meta.avatar_url || "https://via.placeholder.com/150";
 
     await supabase.from("mensajes").insert([
-      { texto: texto, usuario: nombre, user_id: usuarioActual.id, avatar_url: avatar }
+      { 
+        texto: texto, 
+        usuario: meta.display_name || "Usuario", 
+        user_id: usuarioActual.id, 
+        avatar_url: meta.avatar_url || "https://via.placeholder.com/150" 
+      }
     ]);
 
     chatInput.value = "";
@@ -282,21 +297,24 @@ function renderMensaje(msg, chatBox) {
   div.style.gap = "10px";
   div.style.alignItems = "center";
 
-  const avatarImg = msg.avatar_url ? `<img src="${msg.avatar_url}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">` : "";
+  const imgAvatar = msg.avatar_url ? `<img src="${msg.avatar_url}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">` : "";
 
   div.innerHTML = `
-    ${!esMio ? avatarImg : ""}
+    ${!esMio ? imgAvatar : ""}
     <div>
       <strong style="display: block; font-size: 11px; opacity: 0.8;">${msg.usuario}</strong>
       <span>${msg.texto}</span>
     </div>
-    ${esMio ? avatarImg : ""}
+    ${esMio ? imgAvatar : ""}
   `;
 
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+// ==========================================
+// 7. DASHBOARD / INICIO
+// ==========================================
 function initDashboard() {
   const greeting = document.getElementById("dashGreeting");
   const dashSub = document.getElementById("dashSub");
@@ -305,13 +323,17 @@ function initDashboard() {
     const meta = usuarioActual.user_metadata || {};
     greeting.textContent = `Hola, ${meta.display_name || "Usuario"}`;
     dashSub.textContent = meta.tipo === "emprendedor" 
-      ? `Prestador de Servicios (${meta.oficio || 'Oficios'}) - Q${meta.tarifa_hora || 0}/hora` 
+      ? `Prestador de Servicios (${meta.oficio || 'Profesional'}) - Q${meta.tarifa_hora || 0}/hora` 
       : "Panel de Cliente";
   }
 }
 
+// ==========================================
+// INICIALIZACIÓN GENERAL
+// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
   if (btnBrandHome) btnBrandHome.onclick = () => navegarA(usuarioActual ? "dashboard" : "landing");
   if (btnLogout) btnLogout.onclick = () => supabase.auth.signOut();
+  
   navegarA("landing");
 });
