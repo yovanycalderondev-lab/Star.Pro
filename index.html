@@ -3,38 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Samazil · STAR.PRO GT</title>
-  <meta name="description" content="Plataforma guatemalteca que conecta clientes con profesionales y emprendedores de oficios.">
-
-  <!-- Favicon e Icono de la App -->
-  <link rel="icon" type="image/png" href="logo.png">
-
-  <!-- Fuentes e Iconos -->
+  <title>Samazil · Plataforma de Servicios</title>
+  
+  <link rel="icon" type="image/jpeg" href="WhatsApp Image 2026-07-25 at 12.05.29 PM_2.jpeg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- ===================== BARRA SUPERIOR (TOPBAR) ===================== -->
-  <header class="topbar" id="topbar">
+  <!-- BARRA SUPERIOR -->
+  <header class="topbar">
     <div class="topbar-inner">
-      <button class="brand" id="btnBrandHome" aria-label="Ir al inicio">
-        <img src="logo.png" alt="Logo Samazil STAR.PRO" class="brand-logo-img">
-        <span class="brand-text">SAMAZIL<small>· STAR.PRO</small></span>
+      <button class="brand" id="btnBrandHome">
+        <img src="WhatsApp Image 2026-07-25 at 12.05.29 PM_2.jpeg" alt="Logo Samazil" class="brand-logo-img">
+        <span class="brand-text">SAMAZIL</span>
       </button>
 
-      <!-- Navegación para usuarios autenticados -->
       <nav class="topbar-nav" id="topbarNav" hidden>
         <button class="nav-link" data-route="dashboard">Inicio</button>
-        <button class="nav-link" data-route="catalogo">Oficios y Servicios</button>
-        <button class="nav-link" data-route="mensajes">Mensajes / Chat</button>
+        <button class="nav-link" data-route="catalogo">Servicios</button>
+        <button class="nav-link" data-route="mensajes">Chat</button>
         <button class="nav-link" data-route="perfil">Mi cuenta</button>
         <button class="nav-link nav-link--ghost" id="btnLogout">Salir</button>
       </nav>
 
-      <!-- Botones para visitantes sin sesión -->
       <div class="topbar-guest" id="topbarGuest">
         <button class="btn btn--ghost-light" data-route="login">Iniciar sesión</button>
         <button class="btn btn--accent" data-route="registro">Crear cuenta</button>
@@ -42,187 +36,109 @@
     </div>
   </header>
 
-  <!-- CONTENEDOR DINÁMICO PRINCIPAL -->
+  <!-- CONTENEDOR PRINCIPAL -->
   <main id="app"></main>
 
-  <!-- ===================== PLANTILLAS (TEMPLATES) ===================== -->
-
-  <!-- 1. LANDING / INICIO -->
+  <!-- PLANTILLAS -->
   <template id="tpl-landing">
     <section class="hero">
       <div class="hero-content">
-        <p class="eyebrow">Plataforma de servicios y oficios · Guatemala</p>
-        <h1 class="hero-title">Conecta con<br>quien lo hace<br><span class="accent-underline">bien.</span></h1>
-        <p class="hero-sub">Plomeros, electricistas, tutores, carpinteros y más. Consulta tarifas claras por hora y contrata con total confianza.</p>
+        <h1 class="hero-title">Conecta con quien lo hace <span class="accent-text">bien.</span></h1>
+        <p class="hero-sub">Encuentra expertos en oficios o ofrece tus servicios en Guatemala con tarifas claras.</p>
         <div class="hero-actions">
-          <button class="btn btn--accent btn--lg" data-route="registro" data-tipo="consumidor">Busco un servicio (Cliente)</button>
-          <button class="btn btn--outline-light btn--lg" data-route="registro" data-tipo="emprendedor">Ofrezco un servicio (Profesional)</button>
+          <button class="btn btn--accent" data-route="registro" data-tipo="consumidor">Busco un servicio</button>
+          <button class="btn btn--outline" data-route="registro" data-tipo="emprendedor">Ofrezco mis servicios</button>
         </div>
-        <p class="hero-foot">¿Ya tienes cuenta? <button class="link-inline" data-route="login">Inicia sesión</button></p>
       </div>
     </section>
-    <section class="cat-head">
-      <h2 class="section-title">Categorías populares</h2>
-    </section>
-    <div class="plaque-grid" id="landingPlaques"></div>
   </template>
 
-  <!-- 2. REGISTRO (INCLUYE CARGA DE IMAGEN DESDE DISPOSITIVO) -->
   <template id="tpl-registro">
     <section class="auth-shell">
       <div class="auth-card">
-        <div class="auth-brand-header">
-          <img src="logo.png" alt="Samazil STAR.PRO" class="auth-logo">
-          <h1 class="auth-title">Crear cuenta</h1>
-        </div>
+        <img src="WhatsApp Image 2026-07-25 at 12.05.29 PM_2.jpeg" alt="Samazil" class="auth-logo">
+        <h1 class="auth-title">Únete a Samazil</h1>
         
-        <div class="seg-toggle" role="tablist" aria-label="Tipo de perfil">
+        <div class="seg-toggle">
           <button class="seg-btn active" data-tipo="consumidor" type="button">Cliente</button>
-          <button class="seg-btn" data-tipo="emprendedor" type="button">Profesional / Prestador</button>
+          <button class="seg-btn" data-tipo="emprendedor" type="button">Prestador</button>
         </div>
         
-        <p class="auth-help" id="regHelp">Busco profesionales para contratar servicios.</p>
+        <form id="formRegistro" class="auth-form">
+          <label>Nombre completo <input type="text" name="nombre" required></label>
+          <label>Correo electrónico <input type="email" name="email" required></label>
+          <label>Foto de Perfil <input type="file" id="inputAvatarFile" accept="image/*"></label>
 
-        <form id="formRegistro" novalidate>
-          <label class="field">
-            <span>Nombre completo</span>
-            <input type="text" name="nombre" placeholder="Ej. Carlos Mendoza" required>
-          </label>
-          <label class="field">
-            <span>Correo electrónico</span>
-            <input type="email" name="email" placeholder="correo@ejemplo.com" required>
-          </label>
-          <label class="field">
-            <span>Foto de Perfil (Subir desde PC o Celular)</span>
-            <input type="file" id="inputAvatarFile" accept="image/*" style="padding: 8px;">
-          </label>
-
-          <!-- Campos dinámicos para Prestadores de servicio -->
           <div id="camposPrestador" style="display: none;">
-            <label class="field">
-              <span>Especialidad / Oficio</span>
-              <input type="text" name="oficio" placeholder="Ej. Plomería, Electricista">
-            </label>
-            <label class="field">
-              <span>Tarifa por hora (Q / hora)</span>
-              <input type="number" name="tarifa_hora" placeholder="Ej. 125" step="5" min="0">
-            </label>
+            <label>Oficio / Especialidad <input type="text" name="oficio"></label>
+            <label>Tarifa por hora (Q) <input type="number" name="tarifa_hora" value="0"></label>
           </div>
 
-          <label class="field">
-            <span>Contraseña</span>
-            <input type="password" name="password" required>
-          </label>
-
-          <p class="form-error" id="regError" hidden></p>
-          <button class="btn btn--accent btn--full" type="submit">Registrarme en Samazil · STAR.PRO</button>
+          <label>Contraseña <input type="password" name="password" required></label>
+          <p id="regError" class="error-msg" hidden></p>
+          <button class="btn btn--accent btn--full" type="submit">Crear cuenta</button>
         </form>
-
-        <p class="auth-switch">¿Ya tienes cuenta? <button class="link-inline" data-route="login">Inicia sesión</button></p>
       </div>
     </section>
   </template>
 
-  <!-- 3. INICIO DE SESIÓN -->
   <template id="tpl-login">
     <section class="auth-shell">
-      <div class="auth-card auth-card--narrow">
-        <div class="auth-brand-header">
-          <img src="logo.png" alt="Samazil STAR.PRO" class="auth-logo">
-          <h1 class="auth-title">Iniciar sesión</h1>
-        </div>
-        <form id="formLogin" novalidate>
-          <label class="field">
-            <span>Correo electrónico</span>
-            <input type="email" name="email" placeholder="correo@ejemplo.com" autocomplete="email" required>
-          </label>
-          <label class="field">
-            <span>Contraseña</span>
-            <input type="password" name="password" autocomplete="current-password" required>
-          </label>
-          <p class="form-error" id="loginError" hidden></p>
-          <button class="btn btn--accent btn--full" type="submit">Entrar a Samazil</button>
+      <div class="auth-card">
+        <img src="WhatsApp Image 2026-07-25 at 12.05.29 PM_2.jpeg" alt="Samazil" class="auth-logo">
+        <h1 class="auth-title">Iniciar sesión</h1>
+        <form id="formLogin" class="auth-form">
+          <label>Correo <input type="email" name="email" required></label>
+          <label>Contraseña <input type="password" name="password" required></label>
+          <p id="loginError" class="error-msg" hidden></p>
+          <button class="btn btn--accent btn--full" type="submit">Entrar</button>
         </form>
-        <p class="auth-switch">¿Eres nuevo? <button class="link-inline" data-route="registro">Crea tu cuenta</button></p>
       </div>
     </section>
   </template>
 
-  <!-- 4. PANEL PRINCIPAL (DASHBOARD) -->
   <template id="tpl-dashboard">
-    <section class="dash-head">
-      <p class="eyebrow">Panel Principal · Samazil STAR.PRO</p>
-      <h1 class="dash-title" id="dashGreeting">—</h1>
-      <p class="dash-sub" id="dashSub"></p>
+    <section class="dash-shell">
+      <h1 id="dashGreeting" class="dash-title">Cargando...</h1>
+      <p id="dashSub" class="dash-sub"></p>
+      <div class="grid-cards">
+        <div class="card" data-route="catalogo"><h3>Explorar Servicios</h3><p>Ver profesionales disponibles</p></div>
+        <div class="card" data-route="mensajes"><h3>Mensajes</h3><p>Chatea con tus contactos</p></div>
+        <div class="card" data-route="perfil"><h3>Mi Cuenta</h3><p>Edita tu información</p></div>
+      </div>
     </section>
-    <section class="dash-actions">
-      <button class="dash-card" data-route="catalogo">
-        <span class="dash-card-num">01</span>
-        <span class="dash-card-title">Servicios y Tarifas</span>
-        <span class="dash-card-text">Explora profesionales con sus tarifas fijas por hora</span>
-      </button>
-      <button class="dash-card" data-route="mensajes">
-        <span class="dash-card-num">02</span>
-        <span class="dash-card-title">Mensajes en Vivo</span>
-        <span class="dash-card-text">Chatea directamente con prestadores de servicios</span>
-      </button>
-      <button class="dash-card" data-route="perfil">
-        <span class="dash-card-num">03</span>
-        <span class="dash-card-title">Mi Cuenta</span>
-        <span class="dash-card-text">Ver y actualizar tus datos de usuario</span>
-      </button>
-    </section>
-    <div class="plaque-grid" id="dashPlaques"></div>
   </template>
 
-  <!-- 5. CATÁLOGO DE SERVICIOS -->
   <template id="tpl-catalogo">
-    <section class="cat-head">
-      <h1 class="section-title">Oficios y Servicios</h1>
-      <p class="section-sub">Selecciona un servicio para ver tarifas por hora sugeridas y contratar.</p>
+    <section class="cat-shell">
+      <h1 class="section-title">Servicios Disponibles</h1>
+      <div class="grid-cards" id="catalogoPlaques"></div>
     </section>
-    <div class="plaque-grid" id="catalogoPlaques"></div>
   </template>
 
-  <!-- 6. PERFIL DE USUARIO -->
   <template id="tpl-perfil">
     <section class="profile-shell" id="profileRoot"></section>
   </template>
 
-  <!-- 7. MENSAJES DIRECCIONADOS (CHAT INDIVIDUAL CLIENTE - PRESTADOR) -->
   <template id="tpl-mensajes">
-    <section class="msg-shell" style="padding: 20px 0;">
-      <div class="chat-layout" style="display: flex; gap: 20px; max-width: 950px; margin: 0 auto; min-height: 480px;">
-        
-        <!-- Panel Izquierdo: Lista de Usuarios / Prestadores -->
-        <div class="chat-users" style="flex: 1; background: rgba(0, 0, 0, 0.4); border-radius: 12px; padding: 15px; border: 1px solid var(--border); display: flex; flex-direction: column;">
-          <h3 style="margin-bottom: 15px; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent);">Contactos</h3>
-          <div id="listaContactos" style="display: flex; flex-direction: column; gap: 8px; overflow-y: auto; flex: 1;">
-            <!-- Renderizado dinámico de la lista de usuarios -->
-          </div>
+    <section class="msg-shell">
+      <div class="chat-layout">
+        <div class="chat-sidebar">
+          <h3>Contactos</h3>
+          <div id="listaContactos" class="contact-list"></div>
         </div>
-
-        <!-- Panel Derecho: Conversación Directa -->
-        <div class="chat-container" style="flex: 2; background: rgba(0, 0, 0, 0.4); border-radius: 12px; padding: 15px; border: 1px solid var(--border); display: flex; flex-direction: column;">
-          <div id="chatHeader" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-            <h3 id="chatTitulo" style="font-size: 1.05rem; font-weight: 600;">Selecciona un usuario para conversar</h3>
-          </div>
-          
-          <div id="msgThread" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 10px 0;">
-            <!-- Los mensajes filtrados se insertan aquí -->
-          </div>
-
-          <form id="formChat" style="display: flex; gap: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
-            <input type="text" id="chatInput" placeholder="Escribe un mensaje..." required style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid var(--border); background: rgba(0,0,0,0.5); color: #fff;">
+        <div class="chat-main">
+          <h3 id="chatTitulo">Selecciona un chat</h3>
+          <div id="msgThread" class="chat-thread"></div>
+          <form id="formChat" class="chat-form">
+            <input type="text" id="chatInput" placeholder="Escribe un mensaje..." required>
             <button type="submit" class="btn btn--accent">Enviar</button>
           </form>
         </div>
-
       </div>
     </section>
   </template>
 
-  <!-- ARCHIVOS DE JAVASCRIPT -->
   <script src="data.js"></script>
   <script type="module" src="app.js"></script>
 </body>
