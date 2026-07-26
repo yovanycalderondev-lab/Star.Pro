@@ -1,46 +1,17 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-// Configuración Supabase
 const SUPABASE_URL = "https://slzbakhcodhebjltriak.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsemJha2hjb2RoZWJqbHRyaWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMTg5NTAsImV4cCI6MjEwMDU5NDk1MH0.iksEXnM3ni17QtVMGkzfZcN1mmZSP8V5d4wV0YxXvjA";
-
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+const DEFAULT_AVATAR = "WhatsApp Image 2026-07-25 at 12.05.29 PM_2.jpeg";
 let usuarioActual = null;
-let rutaActual = "landing";
 let receptorActivoId = null;
 
-// ==========================================
-// SUBIDA DE ARCHIVO A SUPABASE STORAGE
-// ==========================================
-async function subirFotoPerfil(file, userId) {
-  if (!file) return "logo.png";
-
-  const fileExt = file.name.split('.').pop();
-  const fileName = `${userId}-${Date.now()}.${fileExt}`;
-  const filePath = `perfiles/${fileName}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from('avatars')
-    .upload(filePath, file);
-
-  if (uploadError) {
-    console.error("Error al subir foto:", uploadError);
-    return "logo.png";
-  }
-
-  const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
-  return data.publicUrl;
-}
-
-// ==========================================
-// NAVEGACIÓN
-// ==========================================
+// ================= NAVEGACIÓN =================
 function navegarA(ruta) {
-  rutaActual = ruta;
   const mainApp = document.getElementById("app");
   const tpl = document.getElementById(`tpl-${ruta}`);
-  
   if (!tpl || !mainApp) return;
 
   mainApp.innerHTML = "";
@@ -51,298 +22,203 @@ function navegarA(ruta) {
   if (ruta === "dashboard") initDashboard();
   if (ruta === "perfil") initPerfil();
   if (ruta === "mensajes") initMensajes();
-  if (["landing", "catalogo", "dashboard"].includes(ruta)) renderPlaques();
+  if (ruta === "catalogo") renderCatalogo();
 }
 
-function actualizarNavegacion(usuario) {
-  const topbarNav = document.getElementById("topbarNav");
-  const topbarGuest = document.getElementById("topbarGuest");
+function actualizarNav() {
+  document.getElementById("topbarNav").hidden = !usuarioActual;
+  document.getElementById("topbarGuest").hidden = !!usuarioActual;
+}
 
-  if (usuario) {
-    if (topbarNav) topbarNav.hidden = false;
-    if (topbarGuest) topbarGuest.hidden = true;
-  } else {
-    if (topbarNav) topbarNav.hidden = true;
-    if (topbarGuest) topbarGuest.hidden = false;
+// ================= STORAGE =================
+async function subirFoto(file, userId) {
+  if (!file) return DEFAULT_AVATAR;
+  const ext = file.name.split('.').pop();
+  const path = `perfiles/${userId}-${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+  if (error) return DEFAULT_AVATAR;
+  return supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+}
+
+// ================= VISTAS =================
+function renderCatalogo() {
+  const container = document.getElementById("catalogoPlaques");
+  if (container && typeof CATEGORIAS !== "undefined") {
+    container.innerHTML = CATEGORIAS.map(cat => `
+      <div class="card">
+        <h3>${cat.nombre}</h3>
+        <p>${cat.descripcion}</p>
+        <p class="accent-text" style="margin-top:10px; font-weight:bold;">Q${cat.tarifa_base} / h</p>
+      </div>
+    `).join("");
   }
 }
 
-function renderPlaques() {
-  const containers = ["landingPlaques", "dashPlaques", "catalogoPlaques"];
-  containers.forEach(id => {
-    const el = document.getElementById(id);
-    if (el && typeof CATEGORIAS !== "undefined") {
-      el.innerHTML = CATEGORIAS.map(cat => `
-        <div class="dash-card" style="border-left: 4px solid ${cat.color || 'var(--accent)'}">
-          <span class="dash-card-title">${cat.nombre}</span>
-          <p class="dash-card-text">${cat.descripcion || ''}</p>
-          <span style="display: block; margin-top: 10px; font-weight: 700; color: var(--accent);">
-            Tarifa prom: Q${cat.tarifa_base} / hora
-          </span>
-        </div>
-      `).join("");
-    }
-  });
-}
-
-// ==========================================
-// REGISTRO
-// ==========================================
 function initRegistro() {
   const form = document.getElementById("formRegistro");
-  const helpText = document.getElementById("regHelp");
-  const camposPrestador = document.getElementById("camposPrestador");
-  let tipoUsuario = "consumidor";
+  const camposPro = document.getElementById("camposPrestador");
+  let tipo = "consumidor";
 
-  if (!form) return;
-
-  // Toggle de cliente / prestador
   document.querySelectorAll(".seg-btn").forEach(btn => {
     btn.onclick = () => {
       document.querySelectorAll(".seg-btn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      tipoUsuario = btn.dataset.tipo;
-      if (camposPrestador) {
-        camposPrestador.style.display = tipoUsuario === "emprendedor" ? "block" : "none";
-      }
-      if (helpText) {
-        helpText.textContent = tipoUsuario === "consumidor" 
-          ? "Busco profesionales para contratar servicios."
-          : "Ofrezco mis servicios y defino mi precio por hora.";
-      }
+      tipo = btn.dataset.tipo;
+      camposPro.style.display = tipo === "emprendedor" ? "block" : "none";
     };
   });
 
   form.onsubmit = async (e) => {
     e.preventDefault();
-    const regError = document.getElementById("regError");
-    if (regError) regError.hidden = true;
+    const btn = form.querySelector("button");
+    btn.textContent = "Cargando...";
+    btn.disabled = true;
 
-    const nombre = form.nombre.value.trim();
     const email = form.email.value.trim();
     const password = form.password.value;
-    const oficio = form.oficio ? form.oficio.value.trim() : "";
-    const tarifaHora = form.tarifa_hora ? form.tarifa_hora.value : "0";
-    const avatarFile = document.getElementById("inputAvatarFile")?.files[0];
+    const nombre = form.nombre.value.trim();
+    const file = document.getElementById("inputAvatarFile")?.files[0];
 
-    // 1. Registro
-    const { data: authData, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          display_name: nombre,
-          tipo: tipoUsuario,
-          oficio: oficio,
-          tarifa_hora: tarifaHora
-        }
-      }
-    });
-
-    if (error) {
-      if (regError) { regError.hidden = false; regError.textContent = error.message; }
+    const { data: authData, error: authErr } = await supabase.auth.signUp({ email, password });
+    
+    if (authErr) {
+      document.getElementById("regError").hidden = false;
+      document.getElementById("regError").textContent = authErr.message;
+      btn.textContent = "Crear cuenta";
+      btn.disabled = false;
       return;
     }
 
-    // 2. Subida de imagen
     if (authData.user) {
-      let avatarUrl = "logo.png";
-      if (avatarFile) {
-        avatarUrl = await subirFotoPerfil(avatarFile, authData.user.id);
-      }
-
-      await supabase.auth.updateUser({
-        data: { avatar_url: avatarUrl }
+      const avatarUrl = await subirFoto(file, authData.user.id);
+      await supabase.from("profiles").upsert({
+        id: authData.user.id,
+        nombre, email, tipo,
+        oficio: form.oficio ? form.oficio.value : "",
+        tarifa_hora: form.tarifa_hora ? parseFloat(form.tarifa_hora.value) : 0,
+        avatar_url: avatarUrl
       });
-
       await supabase.auth.signInWithPassword({ email, password });
     }
   };
 }
 
-// ==========================================
-// LOGIN Y DASHBOARD
-// ==========================================
 function initLogin() {
   const form = document.getElementById("formLogin");
-  if (!form) return;
-
   form.onsubmit = async (e) => {
     e.preventDefault();
-    const errorMsg = document.getElementById("loginError");
-    if (errorMsg) errorMsg.hidden = true;
-
     const { error } = await supabase.auth.signInWithPassword({
       email: form.email.value.trim(),
       password: form.password.value
     });
-
-    if (error && errorMsg) {
-      errorMsg.hidden = false;
-      errorMsg.textContent = "Correo o contraseña incorrectos.";
+    if (error) {
+      document.getElementById("loginError").hidden = false;
+      document.getElementById("loginError").textContent = "Datos incorrectos.";
     }
   };
 }
 
-function initDashboard() {
-  const greeting = document.getElementById("dashGreeting");
-  const dashSub = document.getElementById("dashSub");
-
-  if (usuarioActual && greeting) {
-    const meta = usuarioActual.user_metadata || {};
-    greeting.textContent = `Hola, ${meta.display_name || "Usuario"}`;
-    dashSub.textContent = meta.tipo === "emprendedor" 
-      ? `Prestador (${meta.oficio || 'Profesional'}) - Q${meta.tarifa_hora || 0}/hora` 
-      : "Panel de Cliente";
+async function initDashboard() {
+  const { data } = await supabase.from("profiles").select("*").eq("id", usuarioActual.id).single();
+  if (data) {
+    document.getElementById("dashGreeting").textContent = `Hola, ${data.nombre}`;
+    document.getElementById("dashSub").textContent = data.tipo === "emprendedor" ? `Prestador: ${data.oficio} | Q${data.tarifa_hora}/h` : "Panel de Cliente";
   }
 }
 
-function initPerfil() {
-  const profileRoot = document.getElementById("profileRoot");
-  if (!profileRoot || !usuarioActual) return;
-
-  const meta = usuarioActual.user_metadata || {};
-  const esPro = meta.tipo === "emprendedor";
-
-  profileRoot.innerHTML = `
-    <div class="auth-card" style="max-width: 550px; margin: 0 auto; text-align: center;">
-      <img src="${meta.avatar_url || 'logo.png'}" alt="Foto de perfil" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); margin-bottom: 15px;">
-      <h1 class="auth-title">${meta.display_name || "Usuario"}</h1>
-      <p style="color: var(--text-muted);">${usuarioActual.email}</p>
-      <div style="margin-top: 20px; text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
-        <p><strong>Tipo de Cuenta:</strong> ${esPro ? "Prestador de Servicios / Profesional" : "Cliente / Consumidor"}</p>
-        ${esPro ? `<p style="margin-top: 5px;"><strong>Especialidad:</strong> ${meta.oficio || "Oficios Varios"}</p>` : ""}
-        ${esPro ? `<p style="margin-top: 5px; font-size: 1.1rem; color: var(--accent); font-weight: bold;">Tarifa asignada: Q${meta.tarifa_hora || 0} / hora</p>` : ""}
+async function initPerfil() {
+  const root = document.getElementById("profileRoot");
+  const { data } = await supabase.from("profiles").select("*").eq("id", usuarioActual.id).single();
+  if (data) {
+    root.innerHTML = `
+      <div class="auth-card" style="margin: 0 auto;">
+        <img src="${data.avatar_url}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 15px;">
+        <h2>${data.nombre}</h2>
+        <p style="color: var(--text-muted)">${data.email}</p>
+        <div style="text-align: left; margin-top: 20px; background: #000; padding: 15px; border-radius: 8px;">
+          <p><strong>Tipo:</strong> ${data.tipo}</p>
+          ${data.tipo === 'emprendedor' ? `<p><strong>Oficio:</strong> ${data.oficio}</p><p><strong>Tarifa:</strong> Q${data.tarifa_hora}/h</p>` : ''}
+        </div>
       </div>
-    </div>
-  `;
-}
-
-// ==========================================
-// CHAT INDIVIDUAL (CLIENTE <-> PRESTADOR)
-// ==========================================
-async function initMensajes() {
-  if (!usuarioActual) return;
-
-  const listaContactos = document.getElementById("listaContactos");
-  const formChat = document.getElementById("formChat");
-
-  // Escuchar mensajes entrantes en tiempo real
-  supabase
-    .channel("mensajes-directos")
-    .on("postgres_changes", { event: "INSERT", schema: "public", table: "mensajes" }, (payload) => {
-      const msg = payload.new;
-      if (receptorActivoId && (
-        (msg.emisor_id === usuarioActual.id && msg.receptor_id === receptorActivoId) ||
-        (msg.emisor_id === receptorActivoId && msg.receptor_id === usuarioActual.id)
-      )) {
-        renderizarMensaje(msg);
-      }
-    })
-    .subscribe();
-
-  // Enviar mensaje
-  if (formChat) {
-    formChat.onsubmit = async (e) => {
-      e.preventDefault();
-      const input = document.getElementById("chatInput");
-      const texto = input.value.trim();
-
-      if (!texto) return;
-      if (!receptorActivoId) {
-        alert("Selecciona un usuario de la lista izquierda para chatear.");
-        return;
-      }
-
-      const meta = usuarioActual.user_metadata || {};
-
-      await supabase.from("mensajes").insert([
-        {
-          texto: texto,
-          emisor_id: usuarioActual.id,
-          receptor_id: receptorActivoId,
-          usuario: meta.display_name || "Usuario"
-        }
-      ]);
-
-      input.value = "";
-    };
+    `;
   }
 }
 
-async function cargarChatConUsuario(receptorId, nombreReceptor) {
+// ================= CHAT =================
+async function initMensajes() {
+  const lista = document.getElementById("listaContactos");
+  const { data: usuarios } = await supabase.from("profiles").select("*").neq("id", usuarioActual.id);
+
+  if (usuarios) {
+    lista.innerHTML = usuarios.map(u => `
+      <div class="contact-item" data-id="${u.id}" data-name="${u.nombre}">
+        <img src="${u.avatar_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+        <div><strong>${u.nombre}</strong><br><small class="accent-text">${u.tipo === 'emprendedor' ? u.oficio : 'Cliente'}</small></div>
+      </div>
+    `).join("");
+
+    document.querySelectorAll(".contact-item").forEach(item => {
+      item.onclick = () => {
+        document.querySelectorAll(".contact-item").forEach(i => i.classList.remove("active"));
+        item.classList.add("active");
+        cargarChat(item.dataset.id, item.dataset.name);
+      };
+    });
+  }
+
+  supabase.channel("chat").on("postgres_changes", { event: "INSERT", schema: "public", table: "mensajes" }, payload => {
+    const m = payload.new;
+    if (receptorActivoId && ((m.emisor_id === usuarioActual.id && m.receptor_id === receptorActivoId) || (m.emisor_id === receptorActivoId && m.receptor_id === usuarioActual.id))) {
+      renderMsg(m);
+    }
+  }).subscribe();
+
+  document.getElementById("formChat").onsubmit = async (e) => {
+    e.preventDefault();
+    const input = document.getElementById("chatInput");
+    if (!input.value.trim() || !receptorActivoId) return;
+    
+    await supabase.from("mensajes").insert([{ texto: input.value.trim(), emisor_id: usuarioActual.id, receptor_id: receptorActivoId }]);
+    input.value = "";
+  };
+}
+
+async function cargarChat(receptorId, nombre) {
   receptorActivoId = receptorId;
-  const chatTitulo = document.getElementById("chatTitulo");
-  const msgThread = document.getElementById("msgThread");
+  document.getElementById("chatTitulo").textContent = `Chat con ${nombre}`;
+  document.getElementById("msgThread").innerHTML = "";
 
-  if (chatTitulo) chatTitulo.textContent = `Chat con ${nombreReceptor}`;
-  if (msgThread) msgThread.innerHTML = "";
-
-  const { data: mensajes } = await supabase
-    .from("mensajes")
-    .select("*")
+  const { data } = await supabase.from("mensajes").select("*")
     .or(`and(emisor_id.eq.${usuarioActual.id},receptor_id.eq.${receptorId}),and(emisor_id.eq.${receptorId},receptor_id.eq.${usuarioActual.id})`)
     .order("created_at", { ascending: true });
 
-  if (mensajes) {
-    mensajes.forEach(renderizarMensaje);
-  }
+  if (data) data.forEach(renderMsg);
 }
 
-function renderizarMensaje(msg) {
-  const msgThread = document.getElementById("msgThread");
-  if (!msgThread) return;
-
+function renderMsg(msg) {
+  const thread = document.getElementById("msgThread");
   const div = document.createElement("div");
-  const esMio = msg.emisor_id === usuarioActual.id;
-
-  div.style.alignSelf = esMio ? "flex-end" : "flex-start";
-  div.style.backgroundColor = esMio ? "var(--accent)" : "rgba(255,255,255,0.1)";
-  div.style.color = esMio ? "#000" : "#fff";
-  div.style.padding = "8px 14px";
-  div.style.borderRadius = "10px";
-  div.style.maxWidth = "75%";
-  div.style.fontSize = "0.95rem";
+  div.className = `msg-bubble ${msg.emisor_id === usuarioActual.id ? 'msg-mine' : 'msg-theirs'}`;
   div.textContent = msg.texto;
-
-  msgThread.appendChild(div);
-  msgThread.scrollTop = msgThread.scrollHeight;
+  thread.appendChild(div);
+  thread.scrollTop = thread.scrollHeight;
 }
 
-// ==========================================
-// EVENTOS Y AUTENTICACIÓN GLOBAL
-// ==========================================
+// ================= EVENTOS GLOBALES =================
 supabase.auth.onAuthStateChange((event, session) => {
   usuarioActual = session ? session.user : null;
-  actualizarNavegacion(usuarioActual);
-  if (session && ["landing", "login", "registro"].includes(rutaActual)) {
+  actualizarNav();
+  if (session && !document.getElementById("tpl-dashboard")) {
+    // Evita recargar si ya está en una ruta válida logueada
     navegarA("dashboard");
   }
 });
 
-document.addEventListener("click", (e) => {
-  const routeBtn = e.target.closest("[data-route]");
-  if (routeBtn) {
-    e.preventDefault();
-    navegarA(routeBtn.getAttribute("data-route"));
-    return;
-  }
-
-  const logoutBtn = e.target.closest("#btnLogout");
-  if (logoutBtn) {
-    e.preventDefault();
-    supabase.auth.signOut();
-    return;
-  }
-
-  const brandBtn = e.target.closest("#btnBrandHome");
-  if (brandBtn) {
-    e.preventDefault();
-    navegarA(usuarioActual ? "dashboard" : "landing");
-    return;
-  }
+document.addEventListener("click", e => {
+  const btn = e.target.closest("[data-route]");
+  if (btn) { e.preventDefault(); navegarA(btn.dataset.route); }
+  if (e.target.closest("#btnLogout")) { supabase.auth.signOut(); navegarA("landing"); }
+  if (e.target.closest("#btnBrandHome")) { navegarA(usuarioActual ? "dashboard" : "landing"); }
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  navegarA("landing");
-});
+document.addEventListener("DOMContentLoaded", () => navegarA("landing"));
