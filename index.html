@@ -8,62 +8,82 @@
     <!-- Ícono de la pestaña -->
     <link rel="icon" href="WhatsApp Image 2026-07-25 at 12.05.29 PM.jpeg" type="image/jpeg">
     
-    <!-- Tu archivo de estilos -->
+    <!-- Hoja de Estilos -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+    <!-- Encabezado -->
     <header>
         <div class="logo-container">
-            <!-- Puedes usar tu imagen aquí también como logo si quieres -->
-            <img src="WhatsApp Image 2026-07-25 at 12.05.29 PM.jpeg" alt="Samazil Logo" width="50" style="border-radius: 5px; vertical-align: middle;">
-            <h1 style="display: inline-block; margin-left: 10px;">Samazil</h1>
+            <img src="WhatsApp Image 2026-07-25 at 12.05.29 PM.jpeg" alt="Samazil Logo" class="logo-img">
+            <h1>Samazil</h1>
         </div>
-        <div class="auth-buttons">
-            <button id="btn-login-google">Iniciar sesión con Google</button>
-            <div id="usuario-info" style="display: none;">
-                <span id="nombre-usuario-header"></span>
-                <button id="btn-logout">Cerrar sesión</button>
-            </div>
+        <div id="usuario-info" style="display: none;">
+            <span id="nombre-usuario-header"></span>
+            <button id="btn-logout" class="btn-danger">Cerrar sesión</button>
         </div>
     </header>
 
-    <main id="contenido-principal" style="display: none;"> <!-- Se oculta hasta que inicie sesión -->
+    <!-- Tarjeta de Autenticación / Registro -->
+    <div id="auth-container" class="card auth-card">
+        <h2>Ingresar a Samazil</h2>
+        <form id="form-auth">
+            <div class="form-group">
+                <label for="auth-nombre">Nombre completo</label>
+                <input type="text" id="auth-nombre" placeholder="Ej: Carlos López" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="auth-email">Correo electrónico</label>
+                <input type="email" id="auth-email" placeholder="correo@ejemplo.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="auth-password">Contraseña</label>
+                <input type="password" id="auth-password" placeholder="Mínimo 6 caracteres" required minlength="6">
+            </div>
+
+            <button type="submit" id="btn-auth" class="btn-primary">Entrar / Registrarme</button>
+        </form>
+    </div>
+
+    <!-- Contenido Principal (Oculto hasta iniciar sesión) -->
+    <main id="contenido-principal" style="display: none;">
         
         <!-- Sección del Perfil -->
-        <section id="perfil-section">
+        <section id="perfil-section" class="card">
             <h2>Configura tu Perfil</h2>
             <form id="perfilUsuario">
-                <label for="fotoPerfil">Foto de Perfil:</label>
-                <input type="file" id="fotoPerfil" accept="image/*">
-
-                <label for="precioHora">Tarifa por Hora:</label>
-                <div class="precio-input">
-                    <span>Q</span>
-                    <input type="number" id="precioHora" placeholder="Ej: 50" min="0" required>
-                    <span>/ hora</span>
+                <div class="form-group">
+                    <label for="precioHora">Tarifa por Hora</label>
+                    <div class="precio-input-wrapper">
+                        <span class="currency-symbol">Q</span>
+                        <input type="number" id="precioHora" placeholder="Ej: 50" min="0" required>
+                        <span class="unit-text">/ hora</span>
+                    </div>
                 </div>
 
-                <button type="submit">Guardar Datos</button>
+                <button type="submit" class="btn-primary">Guardar Tarifa</button>
             </form>
         </section>
 
         <!-- Sección de Mensajes -->
-        <section id="mensajes-section">
+        <section id="mensajes-section" class="card">
             <h2>Mensajes</h2>
-            <!-- Caja donde aparecerán los mensajes -->
-            <div id="chat-box" style="border: 1px solid #ccc; height: 300px; overflow-y: scroll; padding: 10px; margin-bottom: 10px; background-color: #f9f9f9;">
-                <p style="color: gray; text-align: center;">Inicia la conversación...</p>
+            <div id="chat-box" class="chat-container">
+                <!-- Los mensajes se cargarán dinámicamente aquí -->
             </div>
             
-            <form id="form-mensaje">
-                <input type="text" id="input-mensaje" placeholder="Escribe un mensaje..." required style="width: 70%; padding: 8px;">
-                <button type="submit" style="padding: 8px;">Enviar</button>
+            <form id="form-mensaje" class="chat-form">
+                <input type="text" id="input-mensaje" placeholder="Escribe un mensaje..." required>
+                <button type="submit" class="btn-primary">Enviar</button>
             </form>
         </section>
 
     </main>
 
-    <!-- Tu archivo principal de JavaScript (IMPORTANTE: debe ser type="module" para Firebase) -->
+    <!-- Archivo JavaScript Modular -->
     <script type="module" src="app.js"></script>
 </body>
 </html>

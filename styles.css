@@ -1,123 +1,275 @@
-/* Estilos Globales para Samazil */
+/* ============================================================
+   SAMAZIL - Estilo Placas de Ruta GT
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700&family=Space+Grotesk:wght@600;700&display=swap');
+
+:root {
+  --ink: #0E2A2C;
+  --ink-2: #143638;
+  --ink-3: #1B4244;
+  --paper: #FBF6EC;
+  --paper-dim: #EFE7D6;
+  --charcoal: #1B1B1B;
+  --marigold: #F2A93B;
+  --marigold-dark: #C9851F;
+  --chicken-red: #D7263D;
+  --line: rgba(251, 246, 236, 0.16);
+
+  --font-display: "Anton", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-data: "Space Grotesk", sans-serif;
+
+  --radius: 8px;
+  --shadow-plate: 0 10px 24px rgba(14, 42, 44, 0.28);
+}
+
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-    background-color: #f4f6f9;
-    color: #333;
-    padding-bottom: 40px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  padding-bottom: 50px;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Encabezado */
+/* ===================== ENCABEZADO / TOPBAR ===================== */
 header {
-    background-color: #ffffff;
-    padding: 15px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--ink);
+  border-bottom: 1px solid var(--line);
+  padding: 14px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+  box-shadow: 0 3px 0 var(--marigold-dark);
 }
 
 .logo-container h1 {
-    color: #ff8c00;
-    font-size: 1.8rem;
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--paper);
 }
 
-/* Botones */
-button {
-    background-color: #ff8c00;
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
+#nombre-usuario-header {
+  font-family: var(--font-data);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--marigold);
+  margin-right: 12px;
 }
 
-button:hover {
-    background-color: #e07b00;
-}
-
-#btn-logout {
-    background-color: #dc3545;
-    margin-left: 10px;
-}
-
-#btn-logout:hover {
-    background-color: #bd2130;
-}
-
-/* Contenido Principal */
+/* ===================== CONTENEDORES Y TARJETAS ===================== */
 main {
-    max-width: 800px;
-    margin: 30px auto;
-    padding: 0 20px;
+  max-width: 750px;
+  margin: 30px auto;
+  padding: 0 20px;
 }
 
-/* Secciones (Tarjetas) */
-section {
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    margin-bottom: 25px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+.card {
+  background: var(--paper);
+  color: var(--charcoal);
+  border-radius: 12px;
+  padding: 30px 26px;
+  box-shadow: var(--shadow-plate);
+  margin-bottom: 25px;
+}
+
+.auth-card {
+  max-width: 440px;
+  margin: 50px auto;
 }
 
 h2 {
-    margin-bottom: 15px;
-    color: #444;
-    border-bottom: 2px solid #ff8c00;
-    padding-bottom: 5px;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: 1.6rem;
+  letter-spacing: 0.02em;
+  margin-bottom: 18px;
+  color: var(--charcoal);
+  border-bottom: 2px solid var(--marigold);
+  padding-bottom: 6px;
 }
 
-/* Formularios */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+/* En caso de títulos dentro del tema oscuro */
+#contenido-principal h2 {
+  color: var(--charcoal);
+}
+
+/* ===================== FORMULARIOS E INPUTS ===================== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
 }
 
 label {
-    font-weight: 600;
-    margin-top: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  text-transform: uppercase;
+  font-family: var(--font-data);
 }
 
 input[type="text"],
-input[type="number"],
-input[type="file"] {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    outline: none;
+input[type="email"],
+input[type="password"],
+input[type="number"] {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: var(--radius);
+  border: 1.5px solid #ddd2b8;
+  font-size: 14.5px;
+  background: #fff;
+  color: var(--charcoal);
+  font-family: var(--font-body);
+  outline: none;
 }
 
-.precio-input {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: bold;
+input:focus {
+  border-color: var(--marigold-dark);
+  outline: 2px solid var(--marigold);
 }
 
-.precio-input input {
-    width: 120px;
+/* Campo de Precio Especial */
+.precio-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Chat */
-#chat-box {
-    border: 1px solid #e1e1e1 !important;
-    border-radius: 8px;
-    background-color: #fafafa !important;
+.precio-input-wrapper input {
+  width: 140px;
 }
 
-#form-mensaje {
-    flex-direction: row;
+.currency-symbol, 
+.unit-text {
+  font-family: var(--font-data);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--charcoal);
 }
 
-#input-mensaje {
-    flex: 1;
+/* ===================== BOTONES ===================== */
+button {
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  font-family: var(--font-body);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--marigold);
+  color: var(--charcoal);
+  box-shadow: 0 3px 0 var(--marigold-dark);
+  width: 100%;
+  margin-top: 8px;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 4px 0 var(--marigold-dark);
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background: var(--chicken-red);
+  color: var(--paper);
+  box-shadow: 0 3px 0 #9c1626;
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+.btn-danger:hover {
+  transform: translateY(-1px);
+}
+
+/* ===================== CHAT Y MENSAJES ===================== */
+.chat-container {
+  border: 1px solid #ddd2b8;
+  border-radius: var(--radius);
+  height: 320px;
+  overflow-y: auto;
+  padding: 15px;
+  background-color: var(--paper-dim);
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Estilo individual de mensajes */
+.chat-container div {
+  max-width: 80%;
+  padding: 9px 13px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.chat-form {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-form input {
+  flex: 1;
+}
+
+.chat-form button {
+  width: auto;
+  margin-top: 0;
+}
+
+/* Adaptación Responsive */
+@media (max-width: 600px) {
+  header {
+    padding: 12px 16px;
+  }
+  
+  .logo-container h1 {
+    font-size: 1.4rem;
+  }
+  
+  main {
+    padding: 0 12px;
+  }
+  
+  .card {
+    padding: 20px 16px;
+  }
 }
