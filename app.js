@@ -1,4 +1,4 @@
-// Importar Firebase SDK
+// Importar Firebase SDK desde CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { 
   getAuth, 
@@ -22,7 +22,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // ==========================================
-// CONFIGURACIÓN DE FIREBASE
+// CONFIGURACIÓN DE FIREBASE (SAMAZIL WEB)
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyBHOzf9seIfLZhN1nfY5kClvYTPdOngMgI",
@@ -30,8 +30,8 @@ const firebaseConfig = {
   projectId: "samazil",
   storageBucket: "samazil.firebasestorage.app",
   messagingSenderId: "735433209556",
-  appId: "1:735433209556:web:ac6f4b5f83a65a12f16d41",
-  measurementId: "G-61J5H2RQKH"
+  appId: "1:735433209556:web:46e18ce0e103adb4f16d41",
+  measurementId: "G-4NBKHC7DSZ"
 };
 
 // Inicialización de servicios
@@ -55,7 +55,7 @@ const chatBox = document.getElementById("chat-box");
 let usuarioActual = null;
 
 // ==========================================
-// 1. SISTEMA DE AUTENTICACIÓN
+// 1. SISTEMA DE AUTENTICACIÓN Y REGISTRO
 // ==========================================
 if (formAuth) {
   formAuth.addEventListener("submit", async (e) => {
@@ -68,7 +68,7 @@ if (formAuth) {
       // Intentar iniciar sesión
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      // Si la cuenta no existe o las credenciales son genéricas de nuevo usuario, registrarlo
+      // Si el usuario no existe o las credenciales son genéricas de nuevo registro, crear la cuenta
       if (
         error.code === 'auth/invalid-credential' || 
         error.code === 'auth/user-not-found'
@@ -110,7 +110,7 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 // ==========================================
-// 2. GESTIÓN DEL PERFIL
+// 2. GESTIÓN DEL PERFIL DE USUARIO
 // ==========================================
 if (formPerfil) {
   formPerfil.addEventListener("submit", async (e) => {
@@ -142,7 +142,7 @@ async function cargarPerfilUsuario(uid) {
 }
 
 // ==========================================
-// 3. MENSAJES EN TIEMPO REAL
+// 3. CHAT / MENSAJES EN TIEMPO REAL
 // ==========================================
 if (formMensaje) {
   formMensaje.addEventListener("submit", async (e) => {
