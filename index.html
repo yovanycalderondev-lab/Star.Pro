@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Samazil · Plataforma de Servicios</title>
+  <title>Samazil · Contrata y ofrece servicios en Guatemala</title>
+  <meta name="description" content="Samazil conecta a clientes con profesionales y emprendedores de oficios en Guatemala. Tarifas claras por hora, en quetzales.">
   <link rel="icon" type="image/jpeg" href="logo.jpeg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -16,7 +17,7 @@
     <div class="topbar-inner">
       <button class="brand" id="btnBrandHome">
         <img src="logo.jpeg" alt="Logo Samazil" class="brand-logo-img">
-        <span class="brand-text">SAMAZIL</span>
+        <span class="brand-text">Samazil</span>
       </button>
 
       <nav class="topbar-nav" id="topbarNav" hidden>
@@ -36,106 +37,9 @@
 
   <main id="app"></main>
 
-  <template id="tpl-landing">
-    <section class="hero">
-      <div class="hero-content">
-        <h1 class="hero-title">Conecta con quien lo hace <span class="accent-text">bien.</span></h1>
-        <p class="hero-sub">Encuentra expertos en oficios o ofrece tus servicios en Guatemala con tarifas claras.</p>
-        <div class="hero-actions">
-          <button class="btn btn--accent" data-route="registro" data-tipo="consumidor">Busco un servicio</button>
-          <button class="btn btn--outline" data-route="registro" data-tipo="emprendedor">Ofrezco mis servicios</button>
-        </div>
-      </div>
-    </section>
-  </template>
-
-  <template id="tpl-registro">
-    <section class="auth-shell">
-      <div class="auth-card">
-        <img src="logo.jpeg" alt="Samazil" class="auth-logo">
-        <h1 class="auth-title">Únete a Samazil</h1>
-        
-        <div class="seg-toggle">
-          <button class="seg-btn active" data-tipo="consumidor" type="button">Cliente</button>
-          <button class="seg-btn" data-tipo="emprendedor" type="button">Prestador</button>
-        </div>
-        
-        <form id="formRegistro" class="auth-form">
-          <label>Nombre completo <input type="text" name="nombre" required></label>
-          <label>Correo electrónico <input type="email" name="email" required></label>
-          <label>Foto de Perfil <input type="file" id="inputAvatarFile" accept="image/*"></label>
-
-          <div id="camposPrestador" style="display: none;">
-            <label>Oficio / Especialidad <input type="text" name="oficio"></label>
-            <label>Tarifa por hora (Q) <input type="number" name="tarifa_hora" value="0"></label>
-          </div>
-
-          <label>Contraseña <input type="password" name="password" required></label>
-          <p id="regError" class="error-msg" hidden></p>
-          <button class="btn btn--accent btn--full" type="submit">Crear cuenta</button>
-        </form>
-      </div>
-    </section>
-  </template>
-
-  <template id="tpl-login">
-    <section class="auth-shell">
-      <div class="auth-card">
-        <img src="logo.jpeg" alt="Samazil" class="auth-logo">
-        <h1 class="auth-title">Iniciar sesión</h1>
-        <form id="formLogin" class="auth-form">
-          <label>Correo <input type="email" name="email" required></label>
-          <label>Contraseña <input type="password" name="password" required></label>
-          <p id="loginError" class="error-msg" hidden></p>
-          <button class="btn btn--accent btn--full" type="submit">Entrar</button>
-        </form>
-      </div>
-    </section>
-  </template>
-
-  <template id="tpl-dashboard">
-    <section class="dash-shell">
-      <h1 id="dashGreeting" class="dash-title">Cargando...</h1>
-      <p id="dashSub" class="dash-sub"></p>
-      <div class="grid-cards">
-        <div class="card" data-route="catalogo"><h3>Explorar Servicios</h3><p>Ver profesionales disponibles</p></div>
-        <div class="card" data-route="mensajes"><h3>Mensajes</h3><p>Chatea con tus contactos</p></div>
-        <div class="card" data-route="perfil"><h3>Mi Cuenta</h3><p>Edita tu información</p></div>
-      </div>
-    </section>
-  </template>
-
-  <template id="tpl-catalogo">
-    <section class="cat-shell">
-      <h1 class="section-title">Servicios Disponibles</h1>
-      <div class="grid-cards" id="catalogoPlaques"></div>
-    </section>
-  </template>
-
-  <template id="tpl-perfil">
-    <section class="profile-shell" id="profileRoot"></section>
-  </template>
-
-  <template id="tpl-mensajes">
-    <section class="msg-shell">
-      <div class="chat-layout">
-        <div class="chat-sidebar">
-          <h3>Contactos</h3>
-          <div id="listaContactos" class="contact-list"></div>
-        </div>
-        <div class="chat-main">
-          <h3 id="chatTitulo">Selecciona un chat</h3>
-          <div id="msgThread" class="chat-thread"></div>
-          <form id="formChat" class="chat-form">
-            <input type="text" id="chatInput" placeholder="Escribe un mensaje..." required autocomplete="off">
-            <button type="submit" class="btn btn--accent">Enviar</button>
-          </form>
-        </div>
-      </div>
-    </section>
-  </template>
-
   <script src="data.js"></script>
-  <script type="module" src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
