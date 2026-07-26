@@ -3,7 +3,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebas
 import { 
   getAuth, 
   GoogleAuthProvider, 
-  signInWithPopup, 
+  signInWithRedirect, 
   signOut, 
   onAuthStateChanged 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -54,15 +54,15 @@ const chatBox = document.getElementById("chat-box");
 let usuarioActual = null;
 
 // ==========================================
-// 1. AUTENTICACIÓN CON GOOGLE
+// 1. AUTENTICACIÓN CON GOOGLE (REDIRECCIÓN)
 // ==========================================
 if (btnLogin) {
   btnLogin.addEventListener("click", async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      // Usa redirección para evitar bloqueos de Pop-ups en Netlify
+      await signInWithRedirect(auth, googleProvider);
     } catch (error) {
-      console.error("Error al iniciar sesión:", error);
-      alert("No se pudo iniciar sesión. Verifica la ventana emergente.");
+      console.error("Error al redirigir para iniciar sesión:", error);
     }
   });
 }
