@@ -11,24 +11,20 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let usuarioActual = null;
 let rutaActual = "landing";
 
-// Nodos DOM
-const mainApp = document.getElementById("app");
-const topbarNav = document.getElementById("topbarNav");
-const topbarGuest = document.getElementById("topbarGuest");
-const btnLogout = document.getElementById("btnLogout");
-const btnBrandHome = document.getElementById("btnBrandHome");
-
 // ==========================================
 // NAVEGACIÓN Y VISTAS
 // ==========================================
 function navegarA(ruta) {
   rutaActual = ruta;
+  const mainApp = document.getElementById("app");
   const tpl = document.getElementById(`tpl-${ruta}`);
-  if (!tpl) return;
+  
+  if (!tpl || !mainApp) return;
 
   mainApp.innerHTML = "";
   mainApp.appendChild(tpl.content.cloneNode(true));
 
+  // Cargar lógica de la pantalla actual
   if (ruta === "landing") renderPlaques("landingPlaques");
   if (ruta === "login") initLogin();
   if (ruta === "registro") initRegistro();
@@ -39,20 +35,12 @@ function navegarA(ruta) {
   if (ruta === "catalogo") renderPlaques("catalogoPlaques");
   if (ruta === "perfil") initPerfil();
   if (ruta === "mensajes") initMensajes();
-
-  vincularEventosNavegacion();
-}
-
-function vincularEventosNavegacion() {
-  document.querySelectorAll("[data-route]").forEach((btn) => {
-    btn.onclick = (e) => {
-      e.preventDefault();
-      navegarA(btn.getAttribute("data-route"));
-    };
-  });
 }
 
 function actualizarNavegacion(usuario) {
+  const topbarNav = document.getElementById("topbarNav");
+  const topbarGuest = document.getElementById("topbarGuest");
+
   if (usuario) {
     if (topbarNav) topbarNav.hidden = false;
     if (topbarGuest) topbarGuest.hidden = true;
@@ -97,7 +85,7 @@ supabase.auth.onAuthStateChange((event, session) => {
 });
 
 // ==========================================
-// FORMULARIOS DE ACCESO Y REGISTRO
+// FORMULARIOS
 // ==========================================
 function initLogin() {
   const form = document.getElementById("formLogin");
@@ -123,99 +111,99 @@ function initLogin() {
 function initRegistro() {
   const form = document.getElementById("formRegistro");
   const helpText = document.getElementById("regHelp");
-  const segBtns = document.querySelectorAll(".seg-btn");
-
   let tipoUsuario = "consumidor";
 
-  if (form) {
-    const renderForm = () => {
-      const esPro = tipoUsuario === "emprendedor";
-      form.innerHTML = `
-        <label class="field">
-          <span>Nombre completo</span>
-          <input type="text" name="nombre" placeholder="Ej. Carlos Mendoza" required>
-        </label>
-        <label class="field">
-          <span>Correo electrónico</span>
-          <input type="email" name="email" placeholder="correo@ejemplo.com" required>
-        </label>
-        <label class="field">
-          <span>Foto de Perfil (Enlace / URL de la imagen)</span>
-          <input type="url" name="avatar_url" placeholder="https://ejemplo.com/mi-foto.jpg">
-        </label>
-        ${esPro ? `
-          <label class="field">
-            <span>Especialidad / Oficio</span>
-            <input type="text" name="oficio" placeholder="Ej. Plomería, Electricista" required>
-          </label>
-          <label class="field">
-            <span>Tarifa por hora (Q / hora)</span>
-            <input type="number" name="tarifa_hora" placeholder="Ej. 125" step="5" min="0" required>
-          </label>
-        ` : ""}
-        <label class="field">
-          <span>Contraseña</span>
-          <input type="password" name="password" required>
-        </label>
-        <p class="form-error" id="regError" hidden></p>
-        <button class="btn btn--accent btn--full" type="submit">Registrarme en Samazil · STAR.PRO</button>
-      `;
-    };
+  if (!form) return;
 
-    renderForm();
+  const renderForm = () => {
+    const esPro = tipoUsuario === "emprendedor";
+    form.innerHTML = `
+      <label class="field">
+        <span>Nombre completo</span>
+        <input type="text" name="nombre" placeholder="Ej. Carlos Mendoza" required>
+      </label>
+      <label class="field">
+        <span>Correo electrónico</span>
+        <input type="email" name="email" placeholder="correo@ejemplo.com" required>
+      </label>
+      <label class="field">
+        <span>Foto de Perfil (URL de imagen)</span>
+        <input type="url" name="avatar_url" placeholder="https://ejemplo.com/mi-foto.jpg">
+      </label>
+      ${esPro ? `
+        <label class="field">
+          <span>Especialidad / Oficio</span>
+          <input type="text" name="oficio" placeholder="Ej. Plomería, Electricista" required>
+        </label>
+        <label class="field">
+          <span>Tarifa por hora (Q / hora)</span>
+          <input type="number" name="tarifa_hora" placeholder="Ej. 125" step="5" min="0" required>
+        </label>
+      ` : ""}
+      <label class="field">
+        <span>Contraseña</span>
+        <input type="password" name="password" required>
+      </label>
+      <p class="form-error" id="regError" hidden></p>
+      <button class="btn btn--accent btn--full" type="submit">Registrarme en Samazil · STAR.PRO</button>
+    `;
+  };
 
-    segBtns.forEach((btn) => {
-      btn.onclick = () => {
-        segBtns.forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        tipoUsuario = btn.dataset.tipo;
-        if (helpText) {
-          helpText.textContent = tipoUsuario === "consumidor" 
-            ? "Busco profesionales para contratar servicios."
-            : "Ofrezco mis servicios y defino mi precio por hora.";
+  renderForm();
+
+  // Escuchar cambio de tipo de usuario en registro
+  document.addEventListener("click", (e) => {
+    const segBtn = e.target.closest(".seg-btn");
+    if (segBtn) {
+      document.querySelectorAll(".seg-btn").forEach(b => b.classList.remove("active"));
+      segBtn.classList.add("active");
+      tipoUsuario = segBtn.dataset.tipo;
+      if (helpText) {
+        helpText.textContent = tipoUsuario === "consumidor" 
+          ? "Busco profesionales para contratar servicios."
+          : "Ofrezco mis servicios y defino mi precio por hora.";
+      }
+      renderForm();
+    }
+  });
+
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const regError = document.getElementById("regError");
+    if (regError) regError.hidden = true;
+
+    const nombre = form.nombre.value.trim();
+    const email = form.email.value.trim();
+    const avatarUrl = form.avatar_url ? form.avatar_url.value.trim() : "";
+    const password = form.password.value;
+    const oficio = form.oficio ? form.oficio.value.trim() : "";
+    const tarifaHora = form.tarifa_hora ? form.tarifa_hora.value : "0";
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          display_name: nombre,
+          tipo: tipoUsuario,
+          avatar_url: avatarUrl || "logo.png",
+          oficio: oficio,
+          tarifa_hora: tarifaHora
         }
-        renderForm();
-      };
+      }
     });
 
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      const regError = document.getElementById("regError");
-      if (regError) regError.hidden = true;
-
-      const nombre = form.nombre.value.trim();
-      const email = form.email.value.trim();
-      const avatarUrl = form.avatar_url ? form.avatar_url.value.trim() : "";
-      const password = form.password.value;
-      const oficio = form.oficio ? form.oficio.value.trim() : "";
-      const tarifaHora = form.tarifa_hora ? form.tarifa_hora.value : "0";
-
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            display_name: nombre,
-            tipo: tipoUsuario,
-            avatar_url: avatarUrl || "logo.png",
-            oficio: oficio,
-            tarifa_hora: tarifaHora
-          }
-        }
-      });
-
-      if (error && regError) {
-        regError.hidden = false;
-        regError.textContent = error.message;
-      } else {
-        await supabase.auth.signInWithPassword({ email, password });
-      }
-    };
-  }
+    if (error && regError) {
+      regError.hidden = false;
+      regError.textContent = error.message;
+    } else {
+      await supabase.auth.signInWithPassword({ email, password });
+    }
+  };
 }
 
 // ==========================================
-// VISTA MI PERFIL
+// VISTAS PERFIL Y CHAT
 // ==========================================
 function initPerfil() {
   const profileRoot = document.getElementById("profileRoot");
@@ -238,9 +226,6 @@ function initPerfil() {
   `;
 }
 
-// ==========================================
-// CHAT EN TIEMPO REAL
-// ==========================================
 function initMensajes() {
   const msgThread = document.getElementById("msgThread");
   if (!msgThread || !usuarioActual) return;
@@ -337,9 +322,37 @@ function initDashboard() {
   }
 }
 
+// ==========================================
+// GESTIÓN GLOBAL DE CLICS (DELEGACIÓN DE EVENTOS)
+// ==========================================
+document.addEventListener("click", (e) => {
+  // Botones con rutas
+  const routeBtn = e.target.closest("[data-route]");
+  if (routeBtn) {
+    e.preventDefault();
+    const ruta = routeBtn.getAttribute("data-route");
+    navegarA(ruta);
+    return;
+  }
+
+  // Clic en el logo del header
+  const brandBtn = e.target.closest("#btnBrandHome");
+  if (brandBtn) {
+    e.preventDefault();
+    navegarA(usuarioActual ? "dashboard" : "landing");
+    return;
+  }
+
+  // Botón Cerrar Sesión
+  const logoutBtn = e.target.closest("#btnLogout");
+  if (logoutBtn) {
+    e.preventDefault();
+    supabase.auth.signOut();
+    return;
+  }
+});
+
+// Inicialización de la App
 document.addEventListener("DOMContentLoaded", () => {
-  if (btnBrandHome) btnBrandHome.onclick = () => navegarA(usuarioActual ? "dashboard" : "landing");
-  if (btnLogout) btnLogout.onclick = () => supabase.auth.signOut();
-  
   navegarA("landing");
 });
