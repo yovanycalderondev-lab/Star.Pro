@@ -1,89 +1,142 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-GT">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samazil</title>
-    
-    <!-- Ícono de la pestaña -->
-    <link rel="icon" href="WhatsApp Image 2026-07-25 at 12.05.29 PM.jpeg" type="image/jpeg">
-    
-    <!-- Hoja de Estilos -->
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STAR.PRO GT</title>
+<meta name="description" content="Plataforma guatemalteca que conecta consumidores con emprendedores y profesionales de oficios.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <!-- Encabezado -->
-    <header>
-        <div class="logo-container">
-            <img src="WhatsApp Image 2026-07-25 at 12.05.29 PM.jpeg" alt="Samazil Logo" class="logo-img">
-            <h1>Samazil</h1>
-        </div>
-        <div id="usuario-info" style="display: none;">
-            <span id="nombre-usuario-header"></span>
-            <button id="btn-logout" class="btn-danger">Cerrar sesión</button>
-        </div>
-    </header>
-
-    <!-- Tarjeta de Autenticación / Registro -->
-    <div id="auth-container" class="card auth-card">
-        <h2>Ingresar a Samazil</h2>
-        <form id="form-auth">
-            <div class="form-group">
-                <label for="auth-nombre">Nombre completo</label>
-                <input type="text" id="auth-nombre" placeholder="Ej: Carlos López" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="auth-email">Correo electrónico</label>
-                <input type="email" id="auth-email" placeholder="correo@ejemplo.com" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="auth-password">Contraseña</label>
-                <input type="password" id="auth-password" placeholder="Mínimo 6 caracteres" required minlength="6">
-            </div>
-
-            <button type="submit" id="btn-auth" class="btn-primary">Entrar / Registrarme</button>
-        </form>
+<!-- ===================== TOPBAR ===================== -->
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <button class="brand" id="btnBrandHome" aria-label="Ir al inicio">
+      <span class="brand-plate">SP</span>
+      <span class="brand-text">STAR.PRO<small>GT</small></span>
+    </button>
+    <nav class="topbar-nav" id="topbarNav" hidden>
+      <button class="nav-link" data-route="dashboard">Inicio</button>
+      <button class="nav-link" data-route="catalogo">Oficios y Servicios</button>
+      <button class="nav-link" data-route="mensajes">Mensajes / Chat</button>
+      <button class="nav-link" data-route="perfil">Mi cuenta</button>
+      <button class="nav-link nav-link--ghost" id="btnLogout">Salir</button>
+    </nav>
+    <div class="topbar-guest" id="topbarGuest">
+      <button class="btn btn--ghost-light" data-route="login">Iniciar sesión</button>
+      <button class="btn btn--accent" data-route="registro">Crear cuenta</button>
     </div>
+  </div>
+</header>
 
-    <!-- Contenido Principal (Oculto hasta iniciar sesión) -->
-    <main id="contenido-principal" style="display: none;">
-        
-        <!-- Sección del Perfil -->
-        <section id="perfil-section" class="card">
-            <h2>Configura tu Perfil</h2>
-            <form id="perfilUsuario">
-                <div class="form-group">
-                    <label for="precioHora">Tarifa por Hora</label>
-                    <div class="precio-input-wrapper">
-                        <span class="currency-symbol">Q</span>
-                        <input type="number" id="precioHora" placeholder="Ej: 50" min="0" required>
-                        <span class="unit-text">/ hora</span>
-                    </div>
-                </div>
+<main id="app"></main>
 
-                <button type="submit" class="btn-primary">Guardar Tarifa</button>
-            </form>
-        </section>
+<!-- ===================== TEMPLATES ===================== -->
 
-        <!-- Sección de Mensajes -->
-        <section id="mensajes-section" class="card">
-            <h2>Mensajes</h2>
-            <div id="chat-box" class="chat-container">
-                <!-- Los mensajes se cargarán dinámicamente aquí -->
-            </div>
-            
-            <form id="form-mensaje" class="chat-form">
-                <input type="text" id="input-mensaje" placeholder="Escribe un mensaje..." required>
-                <button type="submit" class="btn-primary">Enviar</button>
-            </form>
-        </section>
+<template id="tpl-landing">
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true">
+      <span class="stripe s1"></span><span class="stripe s2"></span><span class="stripe s3"></span><span class="stripe s4"></span><span class="stripe s5"></span>
+    </div>
+    <div class="hero-content">
+      <p class="eyebrow">Plataforma de oficios y servicios · Guatemala</p>
+      <h1 class="hero-title">Conectate con<br>quien lo hace<br><span class="accent-underline">bien.</span></h1>
+      <p class="hero-sub">Buscá plomeros, electricistas, tutores, músicos, jardineros y más — con tarifas claras desde el primer momento.</p>
+      <div class="hero-actions">
+        <button class="btn btn--accent btn--lg" data-route="registro" data-tipo="consumidor">Busco un servicio (Cliente)</button>
+        <button class="btn btn--outline-light btn--lg" data-route="registro" data-tipo="emprendedor">Ofrezco un servicio (Profesional)</button>
+      </div>
+      <p class="hero-foot">¿Ya tenés cuenta? <button class="link-inline" data-route="login">Iniciá sesión</button></p>
+    </div>
+  </section>
+</template>
 
-    </main>
+<template id="tpl-registro">
+  <section class="auth-shell">
+    <div class="auth-card">
+      <h1 class="auth-title">Crear cuenta</h1>
+      <div class="seg-toggle" role="tablist" aria-label="Tipo de perfil">
+        <button class="seg-btn active" data-tipo="consumidor" type="button">Consumidor (Cliente)</button>
+        <button class="seg-btn" data-tipo="emprendedor" type="button">Emprendedor / Profesional</button>
+      </div>
+      <p class="auth-help" id="regHelp">Busco profesionales para contratar servicios.</p>
+      <form id="formRegistro" novalidate></form>
+      <p class="auth-switch">¿Ya tenés cuenta? <button class="link-inline" data-route="login">Iniciá sesión</button></p>
+    </div>
+  </section>
+</template>
 
-    <!-- Archivo JavaScript Modular -->
-    <script type="module" src="app.js"></script>
+<template id="tpl-login">
+  <section class="auth-shell">
+    <div class="auth-card auth-card--narrow">
+      <h1 class="auth-title">Iniciar sesión</h1>
+      <form id="formLogin" novalidate>
+        <label class="field">
+          <span>Número de teléfono</span>
+          <input type="tel" name="telefono" placeholder="Ej. 55554444" autocomplete="tel" required>
+        </label>
+        <label class="field">
+          <span>Contraseña</span>
+          <input type="password" name="password" autocomplete="current-password" required>
+        </label>
+        <p class="form-error" id="loginError" hidden></p>
+        <button class="btn btn--accent btn--full" type="submit">Entrar</button>
+      </form>
+      <p class="auth-switch">¿Sos nuevo? <button class="link-inline" data-route="registro">Creá tu cuenta</button></p>
+    </div>
+  </section>
+</template>
+
+<template id="tpl-dashboard">
+  <section class="dash-head">
+    <p class="eyebrow">Bienvenido de nuevo</p>
+    <h1 class="dash-title" id="dashGreeting">—</h1>
+    <p class="dash-sub" id="dashSub"></p>
+  </section>
+  <section class="dash-actions">
+    <button class="dash-card" data-route="catalogo">
+      <span class="dash-card-num">01</span>
+      <span class="dash-card-title">Buscar Servicios</span>
+      <span class="dash-card-text">Explora profesionales de plomería, electricidad y más</span>
+    </button>
+    <button class="dash-card" data-route="mensajes">
+      <span class="dash-card-num">02</span>
+      <span class="dash-card-title">Mensajes en Vivo</span>
+      <span class="dash-card-text">Chatea en directo con usuarios y prestadores registrados</span>
+    </button>
+    <button class="dash-card" data-route="perfil">
+      <span class="dash-card-num">03</span>
+      <span class="dash-card-title">Mi Perfil</span>
+      <span class="dash-card-text">Gestiona tus datos o sube fotos de tus proyectos</span>
+    </button>
+  </section>
+</template>
+
+<template id="tpl-catalogo">
+  <section class="cat-head">
+    <h1 class="section-title">Oficios y Servicios</h1>
+    <p class="section-sub">Elegí una categoría para ver profesionales disponibles.</p>
+  </section>
+  <div class="plaque-grid" id="catalogoPlaques"></div>
+</template>
+
+<template id="tpl-perfil">
+  <section class="profile-shell" id="profileRoot"></section>
+</template>
+
+<template id="tpl-mensajes">
+  <section class="msg-shell">
+    <div style="width: 100%; max-width: 800px; margin: 0 auto; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.1);">
+      <h2 class="section-title section-title--sm" style="margin-bottom: 15px;">Sala de Conversación General</h2>
+      <div id="msgThread"></div>
+    </div>
+  </section>
+</template>
+
+<script type="module" src="app.js"></script>
 </body>
 </html>
