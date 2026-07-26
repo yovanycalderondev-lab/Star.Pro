@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Samazil · Plataforma de Servicios</title>
-  
-  <link rel="icon" type="image/jpeg" href="WhatsApp Image 2026-07-25 at 12.05.29 PM_2.jpeg">
+  <link rel="icon" type="image/jpeg" href="logo.jpeg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -13,11 +12,10 @@
 </head>
 <body>
 
-  <!-- BARRA SUPERIOR -->
   <header class="topbar">
     <div class="topbar-inner">
       <button class="brand" id="btnBrandHome">
-        <img src="WhatsApp Image 2026-07-25 at 12.05.29 PM_2.jpeg" alt="Logo Samazil" class="brand-logo-img">
+        <img src="logo.jpeg" alt="Logo Samazil" class="brand-logo-img">
         <span class="brand-text">SAMAZIL</span>
       </button>
 
@@ -36,10 +34,8 @@
     </div>
   </header>
 
-  <!-- CONTENEDOR PRINCIPAL -->
   <main id="app"></main>
 
-  <!-- PLANTILLAS -->
   <template id="tpl-landing">
     <section class="hero">
       <div class="hero-content">
@@ -85,7 +81,7 @@
   <template id="tpl-login">
     <section class="auth-shell">
       <div class="auth-card">
-        <img src="WhatsApp Image 2026-07-25 at 12.05.29 PM_2.jpeg" alt="Samazil" class="auth-logo">
+        <img src="logo.jpeg" alt="Samazil" class="auth-logo">
         <h1 class="auth-title">Iniciar sesión</h1>
         <form id="formLogin" class="auth-form">
           <label>Correo <input type="email" name="email" required></label>
@@ -131,7 +127,7 @@
           <h3 id="chatTitulo">Selecciona un chat</h3>
           <div id="msgThread" class="chat-thread"></div>
           <form id="formChat" class="chat-form">
-            <input type="text" id="chatInput" placeholder="Escribe un mensaje..." required>
+            <input type="text" id="chatInput" placeholder="Escribe un mensaje..." required autocomplete="off">
             <button type="submit" class="btn btn--accent">Enviar</button>
           </form>
         </div>
