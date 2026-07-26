@@ -1,6 +1,15 @@
-// app.js - Samazil Plataforma de Servicios
+// app.js - Samazil Plataforma de Servicios (Autónomo)
 
-import { CATEGORIAS } from './data.js';
+// Definición de categorías integrada para evitar errores de importación
+const CATEGORIAS = [
+  { id: 'c1', nombre: 'Electricista' },
+  { id: 'c2', nombre: 'Plomería' },
+  { id: 'c3', nombre: 'Albañilería' },
+  { id: 'c4', nombre: 'Carpintería' },
+  { id: 'c5', nombre: 'Pintura y Decoración' },
+  { id: 'c6', nombre: 'Jardinería' },
+  { id: 'c7', nombre: 'Tecnología y Soporte' }
+];
 
 // Estado global de la aplicación
 const state = {
@@ -63,7 +72,7 @@ function updateTopbar() {
       userProfileContainer.style.display = 'flex';
       userProfileContainer.innerHTML = `
         <div class="topbar-user-avatar">
-          <img src="${getUserAvatar(state.user)}" alt="${state.user.nombre}" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=fallback'">
+          <img src="${getUserAvatar(state.user)}" alt="${state.user.nombre}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=fallback'">
         </div>
         <div class="topbar-user-info">
           <span class="topbar-welcome-text">¡Bienvenido!</span>
@@ -211,7 +220,7 @@ function renderRegistro(app, tipoInicial) {
       tipo: currentTipo,
       oficio: currentTipo === 'emprendedor' ? oficio : null,
       tarifa_hora: currentTipo === 'emprendedor' ? tarifa_hora : null,
-      avatar: '' // Se asignará el SVG genérico por defecto
+      avatar: '' 
     };
 
     state.users.push(nuevoUsuario);
