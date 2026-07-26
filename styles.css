@@ -336,3 +336,35 @@ a{ color: inherit; }
   .brand-text{ font-size: 13px; }
   .hero{ padding: 40px 0 40px; }
 }
+/* Estilos para el Logo de Samazil STAR.PRO */
+.brand-logo-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.auth-brand-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.auth-logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+/* Chat container layout */
+.chat-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  background: rgba(0,0,0,0.3);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--border);
+}
