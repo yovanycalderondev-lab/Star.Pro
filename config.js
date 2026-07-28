@@ -1,11 +1,15 @@
-// config.js — Credenciales de conexión a Supabase
+// config.js — Credenciales públicas de tu proyecto de Supabase
 //
-// 1. Andá a https://supabase.com/dashboard → tu proyecto → Project Settings → API
+// 1. Entrá a https://supabase.com/dashboard → tu proyecto → Project Settings → API
 // 2. Copiá "Project URL" y pegalo abajo en SUPABASE_URL
 // 3. Copiá la clave "anon public" y pegala abajo en SUPABASE_ANON_KEY
 //
-// Esta clave "anon" es pública y segura de exponer en el navegador:
-// la seguridad real la dan las políticas RLS definidas en supabase-schema.sql.
+// Esta clave "anon" es pública y segura de exponer en el frontend:
+// la seguridad real la dan las políticas RLS de supabase/schema.sql.
 
-window.SUPABASE_URL = 'https://slzbakhcodhebjltriak.supabase.co';
-window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsemJha2hjb2RoZWJqbHRyaWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMTg5NTAsImV4cCI6MjEwMDU5NDk1MH0.iksEXnM3ni17QtVMGkzfZcN1mmZSP8V5d4wV0YxXvjA';
+const SAMAZIL_CONFIG = {
+  SUPABASE_URL: 'https://TU-PROYECTO.supabase.co',
+  SUPABASE_ANON_KEY: 'TU-CLAVE-ANON-PUBLICA'
+};
+
+window.SAMAZIL_CONFIG = SAMAZIL_CONFIG;

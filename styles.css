@@ -349,6 +349,51 @@ img{ max-width: 100%; }
 .topbar-welcome-text{ font-family: var(--font-data); font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color: var(--marigold); font-weight:700; }
 .topbar-user-name{ font-size:13.5px; font-weight:700; color: var(--paper); line-height:1.2; }
 
+/* ===================== FOOTER ===================== */
+.site-footer{ border-top: 1px solid var(--line); margin-top: 40px; }
+.site-footer-inner{
+  max-width: 1180px; margin: 0 auto; padding: 20px 24px 34px;
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+  font-size: 12.5px; color: rgba(251,246,236,0.5);
+}
+
+/* ===================== TERMS CHECKBOX ===================== */
+.terms-check{
+  display:flex; align-items:flex-start; gap:10px; margin: 4px 0 16px;
+  background: var(--paper-dim); padding: 12px 14px; border-radius: 10px;
+}
+.terms-check input{ margin-top: 3px; width:16px; height:16px; flex-shrink:0; }
+.terms-check label{ font-size: 12.5px; color:#544c3a; line-height:1.5; font-weight:500; }
+.terms-check a, .terms-check button.link-inline{ font-size: 12.5px; }
+
+.terms-page{ max-width: 720px; margin: 40px auto 60px; background: var(--paper); color: var(--charcoal); border-radius: var(--radius-lg); padding: 34px 38px; box-shadow: var(--shadow-plate); position:relative; overflow:hidden; }
+.terms-page::before{ content:""; position:absolute; top:0; left:0; right:0; height:5px; background: var(--huipil); background-size:220% 100%; }
+.terms-page h2{ font-family: var(--font-display); font-weight:400; text-transform:uppercase; font-size:26px; margin: 6px 0 4px; }
+.terms-page h3{ font-family: var(--font-data); font-size:15px; margin: 22px 0 6px; }
+.terms-page p, .terms-page li{ font-size: 14px; line-height:1.65; color:#4a4436; }
+.terms-page .callout{ background:#FBE4E4; border-left: 4px solid var(--chicken-red); padding: 14px 16px; border-radius: 8px; font-size:13.5px; color:#7a1220; margin: 18px 0; }
+
+/* ===================== RATING MODAL ===================== */
+.modal-overlay{
+  position: fixed; inset:0; background: rgba(14,42,44,0.72); backdrop-filter: blur(3px);
+  display:flex; align-items:center; justify-content:center; z-index: 200; padding: 20px;
+}
+.modal-card{
+  background: var(--paper); color: var(--charcoal); border-radius: var(--radius-lg);
+  padding: 28px; width:100%; max-width: 400px; box-shadow: var(--shadow-pop); position:relative;
+}
+.modal-close{ position:absolute; top:14px; right:14px; background:none; border:none; font-size:20px; color:#999; line-height:1; }
+.modal-title{ font-family: var(--font-display); font-weight:400; text-transform:uppercase; font-size:19px; margin:0 0 4px; }
+.modal-sub{ font-size:13px; color:#847a63; margin: 0 0 16px; }
+.star-picker{ display:flex; gap:6px; justify-content:center; margin: 10px 0 18px; }
+.star-picker button{ background:none; border:none; font-size:34px; color:#ddd2b8; transition: transform .1s ease; padding:0; }
+.star-picker button:hover{ transform: scale(1.12); }
+.star-picker button.is-filled{ color: var(--marigold); }
+.modal-card textarea{ width:100%; padding:11px 13px; border-radius:10px; border:1.5px solid #e2d8bd; font-size:13.5px; font-family:inherit; margin-bottom:14px; }
+
+.pro-rating-line{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:2px; }
+.btn-rate-link{ background:none; border:none; color: var(--marigold); font-size:12px; font-weight:700; padding:0; text-decoration:underline; }
+
 @media (prefers-reduced-motion: reduce){
   *{ transition: none !important; scroll-behavior: auto !important; }
 }
